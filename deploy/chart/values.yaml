@@ -1,0 +1,16 @@
+prefix: auth
+
+userService:
+  # image:
+  name: users
+  replicas: 1
+  cockroach:
+    deployment: "cockroach"
+    database: "users"
+    username: "users"
+    secret: "users-cockroach"
+    migrations: {}
+
+tokens: {}
+
+verify: {}

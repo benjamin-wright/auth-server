@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "ph.users.full_name" . }}
+spec:
+  replicas: {{ .Values.userService.replicas }}
+  selector:
+    matchLabels:
+      app: {{ template "ph.users.full_name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "ph.users.full_name" . }}
+    spec:
+      containers:
+      - name: operator
+        image: {{ default (printf "benwright/db-operator:%s" .Chart.AppVersion) .Values.userService.image }}
+        env:
+        - name: NAMESPACE
+          value: {{ .Release.Namespace }}
