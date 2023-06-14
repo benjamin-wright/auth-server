@@ -4,6 +4,6 @@ metadata:
   name: {{ template "ph.users.full_name" . }}
 spec:
   deployment: {{ .Values.cockroach.deployment }}
-  database: {{ .Values.userService.cockroach.database }}
-  username: {{ .Values.userService.cockroach.username }}
-  secret: {{ .Values.userService.cockroach.secret }}
+  database: {{ .Values.users.cockroach.database }}
+  username: {{ .Values.users.cockroach.username }}
+  secret: {{ .Values.users.cockroach.secret }}

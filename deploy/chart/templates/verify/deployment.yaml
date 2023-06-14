@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "ph.verify.full_name" . }}
+spec:
+  replicas: {{ .Values.verify.replicas }}
+  selector:
+    matchLabels:
+      app: {{ template "ph.verify.full_name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "ph.verify.full_name" . }}
+    spec:
+      containers:
+      - name: operator
+        image: {{ default (printf "benwright/auth-service/verify:%s" .Chart.AppVersion) .Values.verify.image }}
+        env:
+        - name: NAMESPACE
+          value: {{ .Release.Namespace }}

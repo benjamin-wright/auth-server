@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "ph.tokens.full_name" . }}
+spec:
+  replicas: {{ .Values.tokens.replicas }}
+  selector:
+    matchLabels:
+      app: {{ template "ph.tokens.full_name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "ph.tokens.full_name" . }}
+    spec:
+      containers:
+      - name: operator
+        image: {{ default (printf "benwright/auth-service/tokens:%s" .Chart.AppVersion) .Values.tokens.image }}
+        env:
+        - name: NAMESPACE
+          value: {{ .Release.Namespace }}

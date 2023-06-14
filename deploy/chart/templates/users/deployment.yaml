@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: {{ template "ph.users.full_name" . }}
 spec:
-  replicas: {{ .Values.userService.replicas }}
+  replicas: {{ .Values.users.replicas }}
   selector:
     matchLabels:
       app: {{ template "ph.users.full_name" . }}
@@ -14,10 +14,10 @@ spec:
     spec:
       containers:
       - name: operator
-        image: {{ default (printf "benwright/db-operator:%s" .Chart.AppVersion) .Values.userService.image }}
+        image: {{ default (printf "benwright/auth-service/users:%s" .Chart.AppVersion) .Values.users.image }}
         envFrom:
         - secretRef:
-            name: "{{ .Values.userService.cockroach.secret }}"
+            name: "{{ .Values.users.cockroach.secret }}"
         env:
         - name: NAMESPACE
           value: {{ .Release.Namespace }}

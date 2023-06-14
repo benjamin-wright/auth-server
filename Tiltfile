@@ -31,6 +31,8 @@ def build(service):
     )
 
 build('users')
+build('tokens')
+build('verify')
 
 k8s_yaml(helm(
     'deploy/chart',
@@ -38,6 +40,8 @@ k8s_yaml(helm(
     namespace='auth-server',
     set=[
         "cockroach.create=true",
-        "userService.image=users",
+        "users.image=users",
+        "tokens.image=tokens",
+        "verify.image=verify"
     ],
 ))

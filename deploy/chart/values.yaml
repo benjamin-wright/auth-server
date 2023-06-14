@@ -5,7 +5,7 @@ cockroach:
   deployment: "cockroach"
   storage: "256Mi"
 
-userService:
+users:
   # image:
   name: users
   replicas: 1
@@ -14,6 +14,12 @@ userService:
     username: "users"
     secret: "users-cockroach"
 
-tokens: {}
+tokens:
+  # image:
+  name: tokens
+  replicas: 1
 
-verify: {}
+verify:
+  # image:
+  name: verify
+  replicas: 1

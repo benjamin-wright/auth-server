@@ -7,7 +7,7 @@ metadata:
   name: {{ $name }}
 spec:
   deployment: {{ $.Values.cockroach.deployment }}
-  database: {{ $.Values.userService.cockroach.database }}
+  database: {{ $.Values.users.cockroach.database }}
   index: {{ $id }}
   migration: |-
     {{- toString $data | nindent 4 }}
