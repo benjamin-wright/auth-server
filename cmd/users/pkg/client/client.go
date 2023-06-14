@@ -48,7 +48,7 @@ func (c *Client) AddUser(ctx context.Context, username string, password string) 
 }
 
 type GetUserResponse struct {
-	ID       string `json:"id" validate:"uuid"`
+	ID       string `json:"id"`
 	Username string `json:"username"`
 }
 
@@ -71,7 +71,7 @@ type CheckPasswordRequest struct {
 }
 
 type CheckPasswordResponse struct {
-	ID       string `json:"id" validate:"uuid"`
+	ID       string `json:"id"`
 	Username string `json:"username"`
 }
 

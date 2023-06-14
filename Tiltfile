@@ -9,7 +9,7 @@ k8s_yaml(namespace_yaml('auth-server'))
 operator(
     name='db-operator',
     namespace='auth-server',
-    version='v1.0.3'
+    version='v1.0.4'
 )
 
 def build(service):

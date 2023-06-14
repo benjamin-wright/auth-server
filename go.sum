@@ -3,6 +3,8 @@ github.com/Masterminds/semver/v3 v3.1.1/go.mod h1:VPu/7SZ7ePZ3QOrcuXROw5FAcLl4a0
 github.com/benbjohnson/clock v1.1.0 h1:Q92kusRqC1XV2MjkWETPvjJVqKetz1OzxZB7mHJLju8=
 github.com/benjamin-wright/db-operator v1.0.1 h1:S5+7y5UqxW5nY34ACVZFaJGthgopSWQ9WQl2Q+o4+Gw=
 github.com/benjamin-wright/db-operator v1.0.1/go.mod h1:Rrjpds79O9k+Ekl2GkXpF9OTzDm3oV/R4miWPwoGcLY=
+github.com/benjamin-wright/db-operator v1.0.4 h1:xZatZEBkfw7bSH3AhwqH+L8uMMgo5xvXCMbxJWNV3bs=
+github.com/benjamin-wright/db-operator v1.0.4/go.mod h1:oumYB8oSDc5omyZWAcXo6I9aRbZzUJK3MKQXCTMNl6I=
 github.com/bytedance/sonic v1.5.0/go.mod h1:ED5hyg4y6t3/9Ku1R6dU/4KyJ48DZ4jPhfY1O2AihPM=
 github.com/bytedance/sonic v1.9.1 h1:6iJ6NqdoxCDr6mbY8h18oSO+cShGSMRGCEo7F2h0x8s=
 github.com/bytedance/sonic v1.9.1/go.mod h1:i736AoUSYt75HyZLoJW9ERYxcy6eaN6h4BZXU064P/U=

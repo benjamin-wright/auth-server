@@ -43,6 +43,9 @@ tilt:
 test:
     go test --short -v ./...
 
+int-test:
+    go test --run Integration -v ./...
+
 build PATH_TO_CODE IMAGE_TAG:
     mkdir -p "{{PATH_TO_CODE}}/dist";
     CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o "{{PATH_TO_CODE}}/dist/app" "{{PATH_TO_CODE}}/main.go";
