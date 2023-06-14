@@ -1,13 +1,14 @@
-{{ $cockroach := .Values.userService.cockroach }}
-{{ range $name, $migration := $cockroach.migrations }}
+{{- range $path, $data := .Files.Glob "resources/*.sql" }}
+{{- $name := trimSuffix ".sql" (base $path) }}
+{{- $id := last (regexSplit "-" $name -1) }}
 apiVersion: ponglehub.co.uk/v1alpha1
 kind: CockroachMigration
 metadata:
   name: {{ $name }}
 spec:
-  deployment: {{ $cockroach.deployment }}
-  database: {{ $migration.database }}
-  index: {{ $migration.index }}
+  deployment: {{ $.Values.cockroach.deployment }}
+  database: {{ $.Values.userService.cockroach.database }}
+  index: {{ $id }}
   migration: |-
-    {{ $migration.migration | nindent 4 }}
+    {{- toString $data | nindent 4 }}
 {{- end }}

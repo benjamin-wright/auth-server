@@ -3,7 +3,6 @@ allow_k8s_contexts(['auth-server'])
 load('ext://namespace', 'namespace_yaml')
 load('ext://helm_resource', 'helm_resource')
 load('./deploy/tilt/db_operator.Tiltfile', 'operator')
-load('./deploy/tilt/migrations.Tiltfile', 'migrations')
 
 k8s_yaml(namespace_yaml('auth-server'))
 
@@ -12,16 +11,6 @@ operator(
     namespace='auth-server',
     version='v1.0.3'
 )
-
-k8s_yaml(blob("""
-    apiVersion: ponglehub.co.uk/v1alpha1
-    kind: CockroachDB
-    metadata:
-        name: cockroach
-        namespace: auth-server
-    spec:
-        storage: 256Mi
-"""))
 
 def build(service):
     custom_build(
@@ -34,27 +23,21 @@ def build(service):
         ]
     )
 
-    # k8s_resource(
-    #     'auth-{}'.format(service),
-    #     auto_init = True,
-    #     trigger_mode = TRIGGER_MODE_MANUAL,
-    #     labels=['auth'],
-    # )
+    k8s_resource(
+        'auth-{}'.format(service),
+        auto_init = True,
+        trigger_mode = TRIGGER_MODE_MANUAL,
+        labels=['auth'],
+    )
 
 build('users')
 
-helm_resource(
-    'auth-server',
+k8s_yaml(helm(
     'deploy/chart',
+    'auth-server',
     namespace='auth-server',
-    flags=[
-        "--set=userService.image=users",
-    ] + migrations(),
-    image_deps=[
-        'users'
+    set=[
+        "cockroach.create=true",
+        "userService.image=users",
     ],
-    image_keys=[
-        'userService.image'
-    ],
-    labels=['auth']
-)
+))

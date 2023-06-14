@@ -15,6 +15,9 @@ spec:
       containers:
       - name: operator
         image: {{ default (printf "benwright/db-operator:%s" .Chart.AppVersion) .Values.userService.image }}
+        envFrom:
+        - secretRef:
+            name: "{{ .Values.userService.cockroach.secret }}"
         env:
         - name: NAMESPACE
           value: {{ .Release.Namespace }}

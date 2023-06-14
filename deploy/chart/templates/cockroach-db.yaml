@@ -1,0 +1,9 @@
+{{- if .Values.cockroach.create }}
+apiVersion: ponglehub.co.uk/v1alpha1
+kind: CockroachDB
+metadata:
+    name: {{ .Values.cockroach.deployment }}
+    namespace: {{ .Release.Namespace }}
+spec:
+    storage: {{ .Values.cockroach.storage }}
+{{- end }}

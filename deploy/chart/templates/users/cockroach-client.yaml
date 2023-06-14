@@ -3,7 +3,7 @@ kind: CockroachClient
 metadata:
   name: {{ template "ph.users.full_name" . }}
 spec:
-  deployment: {{ .Values.userService.cockroach.deployment }}
+  deployment: {{ .Values.cockroach.deployment }}
   database: {{ .Values.userService.cockroach.database }}
   username: {{ .Values.userService.cockroach.username }}
   secret: {{ .Values.userService.cockroach.secret }}
