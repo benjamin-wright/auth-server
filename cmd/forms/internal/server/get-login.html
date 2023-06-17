@@ -1,13 +1,11 @@
 {{- define "content" }}
     <h1>{{ .Common.Title }}</h1>
-    <form action="http://{{ .Common.Domain }}{{ .Common.Prefix }}/login" method="post">
+    <form action="http://{{ .Common.Domain }}/{{ .Common.Prefix }}/login" method="post">
         <input type="text" name="nonce" id="nonce" value="{{ .Context.Nonce }}" hidden>
         <label for="username">Username</label>
         <input type="text" name="username" id="username">
         <label for="password">Password</label>
         <input type="password" name="password" id="password">
-        <label for="confirm">Confirm</label>
-        <input type="password" name="confirm" id="confirm">
         <input type="submit" value="Login">
     </form>
     {{- if .Context.Error }}

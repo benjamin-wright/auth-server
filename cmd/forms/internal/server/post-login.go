@@ -13,10 +13,9 @@ import (
 )
 
 type LoginForm struct {
-	LoginNonce string `form:"login-nonce"`
-	Username   string `form:"username"`
-	Password   string `form:"password"`
-	Confirm    string `form:"confirm"`
+	Nonce    string `form:"nonce" binding:"required"`
+	Username string `form:"username" binding:"required"`
+	Password string `form:"password" binding:"required"`
 }
 
 func postLogin(prefix string, domain string, rdb *redis.Client, tokens *tokenClient.Client, users *userClient.Client) api.Handler {
@@ -28,47 +27,41 @@ func postLogin(prefix string, domain string, rdb *redis.Client, tokens *tokenCli
 			err := c.Bind(&data)
 			if err != nil {
 				log.Error().Err(err).Msg("failed to bind form data")
-				c.Redirect(302, "http://"+domain+prefix+"/login?error=server")
+				c.Redirect(302, "http://"+domain+"/"+prefix+"/login?error=server")
 				return
 			}
 
-			cmd := rdb.Get(c, data.LoginNonce)
+			cmd := rdb.Get(c, data.Nonce)
 			if cmd.Err() != nil {
-				log.Warn().Err(cmd.Err()).Msg("failed to get nonce")
-				c.Redirect(302, "http://"+domain+prefix+"/login?error=nonce")
+				log.Warn().Err(cmd.Err()).Msgf("failed to get nonce: %s", data.Nonce)
+				c.Redirect(302, "http://"+domain+"/"+prefix+"/login?error=nonce")
 				return
 			}
 
-			if data.Password != data.Confirm {
-				log.Warn().Msg("passwords do not match")
-				c.Redirect(302, "http://"+domain+prefix+"/login?error=fail")
-				return
-			}
+			defer func() {
+				delCmd := rdb.Del(c, data.Nonce)
+				if delCmd.Err() != nil {
+					log.Error().Err(delCmd.Err()).Msg("failed to delete nonce")
+				}
+			}()
 
 			res, ok, err := users.CheckPassword(context.Background(), data.Username, data.Password)
 			if err != nil {
 				log.Error().Err(err).Msg("failed to check password")
-				c.Redirect(302, "http://"+domain+prefix+"/login?error=server")
+				c.Redirect(302, "http://"+domain+"/"+prefix+"/login?error=server")
 				return
 			}
 
 			if !ok {
 				log.Warn().Msg("incorrect password")
-				c.Redirect(302, "http://"+domain+prefix+"/login?error=fail")
+				c.Redirect(302, "http://"+domain+"/"+prefix+"/login?error=fail")
 				return
 			}
 
 			token, err := tokens.GetLoginToken(res.ID)
 			if err != nil {
 				log.Error().Err(err).Msg("failed to get login token")
-				c.Redirect(302, "http://"+domain+prefix+"/login?error=server")
-				return
-			}
-
-			delCmd := rdb.Del(c, data.LoginNonce)
-			if delCmd.Err() != nil {
-				log.Error().Err(delCmd.Err()).Msg("failed to delete nonce")
-				c.Redirect(302, "http://"+domain+prefix+"/login?error=server")
+				c.Redirect(302, "http://"+domain+"/"+prefix+"/login?error=server")
 				return
 			}
 
