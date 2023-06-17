@@ -1,0 +1,10 @@
+apiVersion: ponglehub.co.uk/v1alpha1
+kind: RedisClient
+metadata:
+  name: {{ template "ph.forms.full_name" . }}
+spec:
+  dbRef:
+    name: {{ .Values.redis.deployment }}
+    namespace: {{ .Release.Namespace }}
+  unit: {{ .Values.forms.redis.unit }}
+  secret: {{ .Values.forms.redis.secret }}

@@ -1,0 +1,9 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: auth-validator
+spec:
+  forwardAuth:
+    address: http://{{ template "ph.verify.full_name" . }}.{{ .Release.Namespace }}.svc.cluster.local
+    authResponseHeaders:
+    - X-Auth-User

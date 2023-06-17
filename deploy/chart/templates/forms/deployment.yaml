@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "ph.forms.full_name" . }}
+spec:
+  replicas: {{ .Values.forms.replicas }}
+  selector:
+    matchLabels:
+      app: {{ template "ph.forms.full_name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "ph.forms.full_name" . }}
+    spec:
+      containers:
+      - name: operator
+        image: {{ default (printf "benwright/auth-service/forms:%s" .Chart.AppVersion) .Values.forms.image }}
+        envFrom:
+        - secretRef:
+            name: "{{ .Values.forms.redis.secret }}"
+        env:
+        - name: NAMESPACE
+          value: {{ .Release.Namespace }}
+        - name: AUTH_DOMAIN
+          value: {{ .Values.domain }}
+        - name: FORMS_PREFIX
+          value: {{ .Values.prefix }}
+        - name: TOKENS_URL
+          value: "http://{{ template "ph.tokens.full_name" . }}.{{ .Release.Namespace }}.svc.cluster.local"
+        - name: USERS_URL
+          value: "http://{{ template "ph.users.full_name" . }}.{{ .Release.Namespace }}.svc.cluster.local"

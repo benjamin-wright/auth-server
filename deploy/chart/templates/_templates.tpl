@@ -9,3 +9,7 @@
 {{- define "ph.verify.full_name" -}}
 {{ printf "%s-%s" .Values.prefix .Values.verify.name }}
 {{- end -}}
+
+{{- define "ph.forms.full_name" -}}
+{{ printf "%s-%s" .Values.prefix .Values.forms.name }}
+{{- end -}}

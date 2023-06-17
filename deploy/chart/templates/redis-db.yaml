@@ -1,0 +1,9 @@
+{{- if .Values.redis.create }}
+apiVersion: ponglehub.co.uk/v1alpha1
+kind: RedisDB
+metadata:
+    name: {{ .Values.redis.deployment }}
+    namespace: {{ .Release.Namespace }}
+spec:
+    storage: {{ .Values.redis.storage }}
+{{- end }}

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: {{ template "ph.forms.full_name" . }}
+  name: {{ template "ph.forms.full_name" . }}
+spec:
+  ports:
+  - name: web
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: {{ template "ph.forms.full_name" . }}
+  type: ClusterIP

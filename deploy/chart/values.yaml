@@ -1,9 +1,15 @@
 prefix: auth
+domain: ponglehub.co.uk
 
 cockroach:
   create: false
   deployment: "cockroach"
   storage: "256Mi"
+
+redis:
+  create: false
+  deployment: "redis"
+  storage: "128Mi"
 
 users:
   # image:
@@ -23,3 +29,12 @@ verify:
   # image:
   name: verify
   replicas: 1
+
+forms:
+  # image:
+  urlPrefix: /auth
+  name: forms
+  replicas: 1
+  redis:
+    unit: 0
+    secret: "forms-redis"

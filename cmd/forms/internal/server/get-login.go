@@ -1,27 +1,31 @@
 package server
 
 import (
+	"context"
 	_ "embed"
 	"fmt"
-	"html/template"
 	"time"
 
+	"github.com/benjamin-wright/auth-server/cmd/forms/internal/server/common"
 	"github.com/benjamin-wright/auth-server/internal/api"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
 	"github.com/google/uuid"
 )
 
-//go:embed login.html
+//go:embed get-login.html
 var loginContent string
 
 type GetLoginData struct {
-	LoginNonce string
+	Nonce string
+	Error string
 }
 
-func getLogin(prefix string, client *redis.Client) api.Handler {
-	t := template.New("login")
-	template.Must(t.Parse(loginContent))
+func getLogin(prefix string, domain string, client *redis.Client) api.Handler {
+	t, err := common.New(loginContent)
+	if err != nil {
+		panic(fmt.Errorf("failed to create login template: %+v", err))
+	}
 
 	return api.Handler{
 		Method: "GET",
@@ -33,10 +37,22 @@ func getLogin(prefix string, client *redis.Client) api.Handler {
 				return
 			}
 
-			client.Set(c, uuid.String(), struct{}{}, 5*time.Minute)
+			cmd := client.Set(context.Background(), uuid.String(), true, 5*time.Minute)
+			if cmd.Err() != nil {
+				c.AbortWithError(500, fmt.Errorf("failed to set nonce: %+v", cmd.Err()))
+				return
+			}
 
-			err = t.Execute(c.Writer, GetLoginData{
-				LoginNonce: uuid.String(),
+			err = t.Execute(c.Writer, common.RenderData{
+				Common: common.CommonData{
+					Prefix: prefix,
+					Domain: domain,
+					Title:  "Login",
+				},
+				Context: GetLoginData{
+					Nonce: uuid.String(),
+					Error: "",
+				},
 			})
 			if err != nil {
 				c.AbortWithError(500, fmt.Errorf("failed to render login page: %+v", err))

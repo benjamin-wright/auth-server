@@ -4,6 +4,8 @@ import (
 	"os"
 
 	"github.com/benjamin-wright/auth-server/cmd/forms/internal/server"
+	tokenClient "github.com/benjamin-wright/auth-server/cmd/tokens/pkg/client"
+	usersClient "github.com/benjamin-wright/auth-server/cmd/users/pkg/client"
 	"github.com/benjamin-wright/auth-server/internal/api"
 	"github.com/benjamin-wright/db-operator/pkg/redis"
 	"github.com/rs/zerolog/log"
@@ -11,6 +13,11 @@ import (
 
 func main() {
 	api.Init()
+
+	domain := os.Getenv("AUTH_DOMAIN")
+	prefix := os.Getenv("FORMS_PREFIX")
+	tokens := tokenClient.New(os.Getenv("TOKENS_URL"))
+	users := usersClient.New(os.Getenv("USERS_URL"))
 
 	cfg, err := redis.ConfigFromEnv()
 	if err != nil {
@@ -24,6 +31,5 @@ func main() {
 		return
 	}
 
-	prefix := os.Getenv("FORMS_PREFIX")
-	api.Run(server.Router(prefix, client))
+	api.Run(server.Router(prefix, domain, client, tokens, users))
 }

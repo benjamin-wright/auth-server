@@ -1,16 +1,12 @@
 allow_k8s_contexts(['auth-server'])
+update_settings ( max_parallel_updates = 3 , k8s_upsert_timeout_secs = 60 , suppress_unused_image_warnings = None ) 
 
-load('ext://namespace', 'namespace_yaml')
 load('ext://helm_resource', 'helm_resource')
-load('./deploy/tilt/db_operator.Tiltfile', 'operator')
+load('ext://namespace', 'namespace_yaml')
 
-k8s_yaml(namespace_yaml('auth-server'))
+namespace = "auth-server"
 
-operator(
-    name='db-operator',
-    namespace='auth-server',
-    version='v1.0.4'
-)
+k8s_yaml(namespace_yaml(namespace))
 
 def build(service):
     custom_build(
@@ -33,15 +29,18 @@ def build(service):
 build('users')
 build('tokens')
 build('verify')
+build('forms')
 
 k8s_yaml(helm(
     'deploy/chart',
     'auth-server',
-    namespace='auth-server',
+    namespace=namespace,
     set=[
         "cockroach.create=true",
+        "redis.create=true",
         "users.image=users",
         "tokens.image=tokens",
-        "verify.image=verify"
+        "verify.image=verify",
+        "forms.image=forms"
     ],
 ))

@@ -1,8 +1,9 @@
 cluster_name := "auth-server"
+namespace_name := "auth-server"
 registry_name := "auth-server-registry.localhost"
 registry_port := "5000"
 
-start: create-cluster setup-context
+start: create-cluster setup-context wait-for-traefik install-operator
 stop: delete-cluster clear-context
 
 create-cluster:
@@ -13,7 +14,7 @@ create-cluster:
         k3d cluster create {{ cluster_name }} \
             --registry-create {{ registry_name }}:0.0.0.0:{{ registry_port }} \
             --kubeconfig-update-default=false \
-            --k3s-arg "--disable=traefik@server:*" \
+            -p "80:80@loadbalancer" \
             --wait;
     else
         echo "cluster {{ cluster_name }} already exists!"
@@ -24,6 +25,33 @@ setup-context:
     @k3d kubeconfig get {{ cluster_name }} > .scratch/kubeconfig
     chmod og-r .scratch/kubeconfig
 
+wait-for-traefik:
+    #!/usr/bin/env bash
+    LAST_STATUS=""
+    STATUS=""
+    
+    echo "Waiting for traefik to start..."
+
+    while [[ "$STATUS" != "Running" ]]; do
+        sleep 1
+        STATUS=$(kubectl --kubeconfig .scratch/kubeconfig get pods -n kube-system -o json | jq '.items[] | select(.metadata.name | startswith("traefik")) | .status.phase' -r)
+        if [[ "$STATUS" != "$LAST_STATUS" ]]; then
+            echo "traefik pod is '$STATUS'"
+        fi
+        LAST_STATUS="$STATUS"
+    done
+
+    echo "done"
+
+install-operator:
+    kubectl create namespace db-operator --dry-run=client -o yaml | kubectl --kubeconfig .scratch/kubeconfig apply -f -
+    helm upgrade --install db-operator oci://docker.io/benwright/db-operator-chart \
+        --kubeconfig .scratch/kubeconfig \
+        --namespace db-operator \
+        --version=v1.0.5 \
+        --set image=benwright/db-operator:v1.0.5 \
+        --wait
+
 delete-cluster:
     if k3d cluster list | grep -qw {{ cluster_name }}; then \
         k3d cluster delete {{ cluster_name }}; \
@@ -33,9 +61,6 @@ clear-context:
     if [[ -f .scratch/kubeconfig ]]; then \
         rm .scratch/kubeconfig; \
     fi
-
-crds:
-    KUBECONFIG="$(pwd)/.scratch/kubeconfig" kubectl apply -f deploy/chart/crds
 
 tilt:
     KUBECONFIG=.scratch/kubeconfig tilt up

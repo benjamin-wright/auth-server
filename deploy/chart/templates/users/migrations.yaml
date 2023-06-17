@@ -6,7 +6,9 @@ kind: CockroachMigration
 metadata:
   name: {{ $name }}
 spec:
-  deployment: {{ $.Values.cockroach.deployment }}
+  dbRef:
+    name: {{ $.Values.cockroach.deployment }}
+    namespace: {{ $.Release.Namespace }}
   database: {{ $.Values.users.cockroach.database }}
   index: {{ $id }}
   migration: |-
