@@ -22,8 +22,9 @@ func Init() {
 }
 
 type RunOptions struct {
-	Handlers     []Handler
-	FileHandlers []FileHandler
+	Handlers             []Handler
+	StaticFiles          []FileHandler
+	EmbeddedFileHandlers []EmbeddedFileHandler
 }
 
 type Handler struct {
@@ -43,8 +44,12 @@ func Router(options RunOptions) *gin.Engine {
 		r.Handle(handler.Method, handler.Path, handler.Handler)
 	}
 
-	for _, handler := range options.FileHandlers {
-		r.StaticFS(handler.Path, handler.GetHttpFS())
+	for _, handler := range options.EmbeddedFileHandlers {
+		r.StaticFS(handler.Path, handler.getHttpFS())
+	}
+
+	for _, handler := range options.StaticFiles {
+		handler.addRoutes(r)
 	}
 
 	return r

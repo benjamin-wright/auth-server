@@ -2,29 +2,51 @@ package server
 
 import (
 	"embed"
+	"os"
 
+	"github.com/benjamin-wright/auth-server/cmd/forms/internal/server/pages/login"
 	tokenClient "github.com/benjamin-wright/auth-server/cmd/tokens/pkg/client"
 	userClient "github.com/benjamin-wright/auth-server/cmd/users/pkg/client"
 	"github.com/benjamin-wright/auth-server/internal/api"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
+	"github.com/rs/zerolog/log"
 )
 
 //go:embed static
 var staticContent embed.FS
 
 func Router(prefix string, domain string, rdb *redis.Client, tokens *tokenClient.Client, users *userClient.Client) *gin.Engine {
-	return api.Router(api.RunOptions{
+	options := api.RunOptions{
 		Handlers: []api.Handler{
-			getLogin(prefix, domain, rdb),
-			postLogin(prefix, domain, rdb, tokens, users),
+			login.Get(prefix, domain, rdb),
+			login.Post(prefix, domain, rdb, tokens, users),
 		},
-		FileHandlers: []api.FileHandler{
+	}
+
+	stat, err := os.Stat("/www/static")
+	if err == nil && stat.IsDir() {
+		log.Info().Msg("using static files from /www/static")
+
+		options.StaticFiles = []api.FileHandler{
 			{
 				Path:   prefix + "/static",
-				FSPath: "static",
-				FS:     staticContent,
+				FSPath: "/www/static",
+				Files:  []string{"styles.css", "favicon.ico"},
 			},
+		}
+
+		return api.Router(options)
+	}
+
+	log.Info().Msg("using default files from embedded content")
+	options.EmbeddedFileHandlers = []api.EmbeddedFileHandler{
+		{
+			Path:   prefix + "/static",
+			FSPath: "static",
+			FS:     staticContent,
 		},
-	})
+	}
+
+	return api.Router(options)
 }

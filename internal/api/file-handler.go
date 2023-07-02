@@ -1,23 +1,21 @@
 package api
 
 import (
-	"embed"
-	"io/fs"
-	"net/http"
+	"github.com/gin-gonic/gin"
 )
 
 type FileHandler struct {
 	Path   string
 	FSPath string
-	FS     embed.FS
+	Files  []string
 }
 
-func (f *FileHandler) GetHttpFS() http.FileSystem {
-	sub, err := fs.Sub(f.FS, f.FSPath)
-
-	if err != nil {
-		panic(err)
+func (f *FileHandler) addRoutes(router *gin.Engine) {
+	if f.Files != nil {
+		for _, file := range f.Files {
+			router.StaticFile(f.Path+"/"+file, f.FSPath+"/"+file)
+		}
+	} else {
+		router.Static(f.Path, f.FSPath)
 	}
-
-	return http.FS(sub)
 }

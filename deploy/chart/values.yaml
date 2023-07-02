@@ -35,6 +35,7 @@ forms:
   urlPrefix: /auth
   name: forms
   replicas: 1
+  # staticConfigMap: ""
   redis:
     unit: 0
     secret: "forms-redis"

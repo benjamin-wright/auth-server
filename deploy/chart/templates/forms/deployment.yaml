@@ -12,6 +12,12 @@ spec:
       labels:
         app: {{ template "ph.forms.full_name" . }}
     spec:
+      {{- if .Values.forms.staticConfigMap }}
+      volumes:
+      - name: config
+        configMap:
+          name: {{ .Values.forms.staticConfigMap }}
+      {{- end }}
       containers:
       - name: operator
         image: {{ default (printf "benwright/auth-service/forms:%s" .Chart.AppVersion) .Values.forms.image }}
@@ -29,3 +35,8 @@ spec:
           value: "http://{{ template "ph.tokens.full_name" . }}.{{ .Release.Namespace }}.svc.cluster.local"
         - name: USERS_URL
           value: "http://{{ template "ph.users.full_name" . }}.{{ .Release.Namespace }}.svc.cluster.local"
+        {{- if .Values.forms.staticConfigMap }}
+        volumeMounts:
+        - name: config
+          mountPath: /www/static
+        {{- end }}

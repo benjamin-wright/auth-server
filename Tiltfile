@@ -41,6 +41,6 @@ k8s_yaml(helm(
         "users.image=users",
         "tokens.image=tokens",
         "verify.image=verify",
-        "forms.image=forms"
+        "forms.image=forms",
     ],
 ))
