@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/benjamin-wright/auth-server/cmd/forms/internal/server/pages/login"
+	"github.com/benjamin-wright/auth-server/cmd/forms/internal/server/pages/register"
 	tokenClient "github.com/benjamin-wright/auth-server/cmd/tokens/pkg/client"
 	userClient "github.com/benjamin-wright/auth-server/cmd/users/pkg/client"
 	"github.com/benjamin-wright/auth-server/internal/api"
@@ -21,6 +22,8 @@ func Router(prefix string, domain string, rdb *redis.Client, tokens *tokenClient
 		Handlers: []api.Handler{
 			login.Get(prefix, domain, rdb),
 			login.Post(prefix, domain, rdb, tokens, users),
+			register.Get(prefix, domain, rdb),
+			register.Post(prefix, domain, rdb, tokens, users),
 		},
 	}
 

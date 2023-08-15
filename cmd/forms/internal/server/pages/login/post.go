@@ -53,7 +53,7 @@ func Post(prefix string, domain string, rdb *redis.Client, tokens *tokenClient.C
 			}
 
 			if !ok {
-				log.Warn().Msg("incorrect password")
+				log.Warn().Msg("incorrect user or password")
 				c.Redirect(302, "http://"+domain+"/"+prefix+"/login?error=fail")
 				return
 			}
@@ -66,7 +66,7 @@ func Post(prefix string, domain string, rdb *redis.Client, tokens *tokenClient.C
 			}
 
 			c.SetCookie("ponglehub.login", token.Token, token.MaxAge, "", domain, false, true)
-			c.Redirect(302, fmt.Sprintf("%s/login", prefix))
+			c.Redirect(302, "http://"+domain+"/home")
 		},
 	}
 }

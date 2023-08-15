@@ -66,7 +66,7 @@ func test[T any](t *testing.T, specs []testSpec[T], f func(t *testing.T, c *clie
 			}
 
 			for _, user := range spec.existing {
-				if err := cli.AddUser(user); !assert.NoError(t, err) {
+				if _, err := cli.AddUser(user); !assert.NoError(t, err) {
 					return
 				}
 			}

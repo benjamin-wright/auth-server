@@ -21,7 +21,7 @@ func postUser(c *users.Client) api.Handler {
 				return
 			}
 
-			err = c.AddUser(users.User{Name: body.Username, Password: body.Password})
+			id, err := c.AddUser(users.User{Name: body.Username, Password: body.Password})
 			if err == users.ErrUserExists {
 				ctx.AbortWithError(http.StatusConflict, err)
 				return
@@ -33,7 +33,9 @@ func postUser(c *users.Client) api.Handler {
 				return
 			}
 
-			ctx.Status(http.StatusCreated)
+			ctx.JSON(http.StatusCreated, client.AddUserResponse{
+				ID: id,
+			})
 		},
 	}
 }

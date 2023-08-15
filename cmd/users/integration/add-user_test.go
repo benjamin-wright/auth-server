@@ -52,7 +52,7 @@ func TestAddUserIntegration(t *testing.T) {
 			},
 		},
 	}, func(u *testing.T, c *client.Client, spec addUserSpec) {
-		err := c.AddUser(context.TODO(), spec.username, spec.password)
+		_, err := c.AddUser(context.TODO(), spec.username, spec.password)
 
 		if spec.err != "" {
 			assert.EqualError(u, err, spec.err)

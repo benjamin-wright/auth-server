@@ -1,4 +1,4 @@
-package login
+package register
 
 import (
 	"context"
@@ -14,22 +14,22 @@ import (
 )
 
 //go:embed get.html
-var loginContent string
+var registerContent string
 
-type GetLoginData struct {
+type GetRegisterData struct {
 	Nonce string
 	Error string
 }
 
 func Get(prefix string, domain string, client *redis.Client) api.Handler {
-	t, err := common.New(loginContent)
+	t, err := common.New(registerContent)
 	if err != nil {
-		panic(fmt.Errorf("failed to create login template: %+v", err))
+		panic(fmt.Errorf("failed to create register template: %+v", err))
 	}
 
 	return api.Handler{
 		Method: "GET",
-		Path:   fmt.Sprintf("%s/login", prefix),
+		Path:   fmt.Sprintf("%s/register", prefix),
 		Handler: func(c *gin.Context) {
 			uuid, err := uuid.NewRandom()
 			if err != nil {
@@ -47,15 +47,15 @@ func Get(prefix string, domain string, client *redis.Client) api.Handler {
 				Common: common.CommonData{
 					Prefix: prefix,
 					Domain: domain,
-					Title:  "Login",
+					Title:  "Register",
 				},
-				Context: GetLoginData{
+				Context: GetRegisterData{
 					Nonce: uuid.String(),
 					Error: "",
 				},
 			})
 			if err != nil {
-				c.AbortWithError(500, fmt.Errorf("failed to render login page: %+v", err))
+				c.AbortWithError(500, fmt.Errorf("failed to render register page: %+v", err))
 			}
 		},
 	}

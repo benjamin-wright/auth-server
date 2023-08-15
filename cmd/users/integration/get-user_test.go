@@ -21,7 +21,6 @@ func TestGetUserIntegration(t *testing.T) {
 			name: "Empty",
 			spec: getUserSpec{
 				user: "myuser",
-				err:  "failed with status code 404",
 			},
 		},
 		{
@@ -43,7 +42,6 @@ func TestGetUserIntegration(t *testing.T) {
 			},
 			spec: getUserSpec{
 				user: "myuser",
-				err:  "failed with status code 404",
 			},
 		},
 		{

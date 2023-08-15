@@ -42,27 +42,40 @@ func (c *Client) DeleteAllUsers() error {
 	return nil
 }
 
-func (c *Client) AddUser(user User) error {
+func (c *Client) AddUser(user User) (string, error) {
 	if !CheckPasswordComplexity(user.Password) {
-		return ErrComplexity
+		return "", ErrComplexity
 	}
 
 	bytes, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return fmt.Errorf("failed to generate password hash: %+v", err)
+		return "", fmt.Errorf("failed to generate password hash: %+v", err)
 	}
 	hash := string(bytes)
 
-	_, err = c.conn.Exec(context.Background(), `INSERT INTO users("name", "password") VALUES ($1, $2)`, user.Name, hash)
-
+	rows, err := c.conn.Query(context.Background(), `INSERT INTO users("name", "password") VALUES ($1, $2) RETURNING "id"`, user.Name, hash)
 	if err != nil {
-		if pgerr, ok := err.(*pgconn.PgError); ok && pgerr.Code == "23505" && pgerr.ConstraintName == "users_name_key" {
-			return ErrUserExists
+		return "", fmt.Errorf("failed to add user to database: %+v", err)
+	}
+	defer rows.Close()
+
+	if rows.Next() {
+		if err = rows.Scan(&user.ID); err != nil {
+			return user.ID, fmt.Errorf("failed to parse new user ID: %+v", err)
 		}
-		return fmt.Errorf("failed to add user to database: %+v", err)
+
+		return user.ID, nil
 	}
 
-	return nil
+	rows.Close()
+	if err := rows.Err(); err != nil {
+		if pgerr, ok := err.(*pgconn.PgError); ok && pgerr.Code == "23505" && pgerr.ConstraintName == "users_name_key" {
+			return "", ErrUserExists
+		}
+		return "", fmt.Errorf("failed to add user to database: %+v", err)
+	}
+
+	return "", errors.New("failed to find new user ID")
 }
 
 var ErrPasswordMismatch = errors.New("password mismatch")

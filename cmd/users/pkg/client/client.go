@@ -27,24 +27,29 @@ type AddUserRequest struct {
 	Password string `json:"password"`
 }
 
-func (c *Client) AddUser(ctx context.Context, username string, password string) error {
+type AddUserResponse struct {
+	ID string `json:"id"`
+}
+
+func (c *Client) AddUser(ctx context.Context, username string, password string) (*AddUserResponse, error) {
+	var response AddUserResponse
 	status, err := request.Post(ctx, c.url, AddUserRequest{
 		Username: username,
 		Password: password,
-	}, nil)
+	}, &response)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if status == http.StatusConflict {
-		return ErrUserExists
+		return nil, ErrUserExists
 	}
 
 	if status != http.StatusCreated {
-		return fmt.Errorf("failed with status code %d", status)
+		return nil, fmt.Errorf("failed with status code %d", status)
 	}
 
-	return nil
+	return &response, nil
 }
 
 type GetUserResponse struct {
@@ -57,6 +62,10 @@ func (c *Client) GetUser(ctx context.Context, username string) (*GetUserResponse
 	status, err := request.Get(ctx, c.url+"/"+url.PathEscape(username), &response)
 	if err != nil {
 		return nil, err
+	}
+
+	if status == http.StatusNotFound {
+		return nil, nil
 	}
 
 	if status != http.StatusOK {
