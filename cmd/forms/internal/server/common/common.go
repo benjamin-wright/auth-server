@@ -8,9 +8,11 @@ import (
 )
 
 type CommonData struct {
-	Prefix string
-	Domain string
-	Title  string
+	Prefix       string
+	Domain       string
+	Title        string
+	LoginLink    bool
+	RegisterLink bool
 }
 
 type RenderData struct {

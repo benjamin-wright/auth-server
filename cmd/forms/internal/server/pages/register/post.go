@@ -13,7 +13,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-type LoginForm struct {
+type RegisterForm struct {
 	Nonce           string `form:"nonce" binding:"required"`
 	Username        string `form:"username" binding:"required"`
 	Password        string `form:"password" binding:"required"`
@@ -25,7 +25,7 @@ func Post(prefix string, domain string, rdb *redis.Client, tokens *tokenClient.C
 		Method: "POST",
 		Path:   fmt.Sprintf("%s/register", prefix),
 		Handler: func(c *gin.Context) {
-			data := LoginForm{}
+			data := RegisterForm{}
 			err := c.Bind(&data)
 			if err != nil {
 				log.Error().Err(err).Msg("failed to bind form data")

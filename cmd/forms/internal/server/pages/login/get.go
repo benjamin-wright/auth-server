@@ -45,9 +45,10 @@ func Get(prefix string, domain string, client *redis.Client) api.Handler {
 
 			err = t.Execute(c.Writer, common.RenderData{
 				Common: common.CommonData{
-					Prefix: prefix,
-					Domain: domain,
-					Title:  "Login",
+					Prefix:       prefix,
+					Domain:       domain,
+					Title:        "Login",
+					RegisterLink: true,
 				},
 				Context: GetLoginData{
 					Nonce: uuid.String(),
