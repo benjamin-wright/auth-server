@@ -3,6 +3,12 @@ namespace_name := "auth-server"
 registry_name := "auth-server-registry.localhost"
 registry_port := "5000"
 
+clean:
+    rm -rf system-tests/node_modules
+    rm -rf system-tests/playwright-report
+    rm -rf system-tests/test-results
+    docker system prune --all --volumes
+
 start: create-cluster setup-context wait-for-traefik install-operator
 stop: delete-cluster clear-context
 
