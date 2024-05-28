@@ -3,7 +3,7 @@ kind: RedisClient
 metadata:
   name: {{ template "ph.forms.full_name" . }}
 spec:
-  dbRef:
+  cluster:
     name: {{ .Values.redis.deployment }}
     namespace: {{ .Release.Namespace }}
   unit: {{ .Values.forms.redis.unit }}

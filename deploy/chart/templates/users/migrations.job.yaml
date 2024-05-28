@@ -1,0 +1,18 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "ph.migrations.full_name" . }}
+spec:
+  template:
+    metadata:
+      name: {{ template "ph.migrations.full_name" . }}
+    spec:
+      containers:
+      - name: migrations
+        image: {{ .Values.users.migrations.image }}
+        envFrom:
+        - secretRef:
+            name: "{{ .Values.users.migrations.secret }}"
+      restartPolicy: Never
+  backoffLimit: 4
+  

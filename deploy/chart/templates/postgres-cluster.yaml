@@ -1,9 +1,9 @@
 {{- if .Values.cockroach.create }}
 apiVersion: ponglehub.co.uk/v1alpha1
-kind: CockroachDB
+kind: PostgresCluster
 metadata:
-    name: {{ .Values.cockroach.deployment }}
+    name: {{ .Values.postgres.deployment }}
     namespace: {{ .Release.Namespace }}
 spec:
-    storage: {{ .Values.cockroach.storage }}
+    storage: {{ .Values.postgres.storage }}
 {{- end }}

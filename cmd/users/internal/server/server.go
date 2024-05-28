@@ -10,6 +10,7 @@ func Router(cli *users.Client) *gin.Engine {
 	return api.Router(api.RunOptions{
 		Handlers: []api.Handler{
 			postUser(cli),
+			getUsers(cli),
 			getUser(cli),
 			putPassword(cli),
 		},

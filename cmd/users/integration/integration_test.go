@@ -9,7 +9,7 @@ import (
 	"github.com/benjamin-wright/auth-server/cmd/users/internal/server"
 	"github.com/benjamin-wright/auth-server/cmd/users/pkg/client"
 	"github.com/benjamin-wright/auth-server/internal/users"
-	"github.com/benjamin-wright/db-operator/pkg/test/cockroach"
+	"github.com/benjamin-wright/db-operator/v2/pkg/test/postgres"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
@@ -31,10 +31,10 @@ func TestMain(m *testing.M) {
 		zerolog.SetGlobalLevel(zerolog.Disabled)
 	}
 
-	close := cockroach.Run("cockroach", 26257)
+	close := postgres.Run("postgres", 26257)
 	defer close()
 
-	cockroach.Migrate("../../../deploy/chart/resources/users-1.sql")
+	postgres.Migrate("../../../deploy/chart/resources/users-1.sql")
 
 	m.Run()
 }

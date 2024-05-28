@@ -1,9 +1,9 @@
 prefix: auth
 domain: ponglehub.co.uk
 
-cockroach:
+postgres:
   create: false
-  deployment: "cockroach"
+  deployment: "postgres"
   storage: "256Mi"
 
 redis:
@@ -12,13 +12,18 @@ redis:
   storage: "128Mi"
 
 users:
+  migrations:
+    name: "migrations"
+    # image:
+    username: "usermigrations"
+    secret: "user-migrations-pg"
   # image:
   name: users
   replicas: 1
-  cockroach:
+  postgres:
     database: "users"
     username: "users"
-    secret: "users-cockroach"
+    secret: "users-pg"
 
 tokens:
   # image:

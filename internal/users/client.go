@@ -5,9 +5,10 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/benjamin-wright/db-operator/pkg/postgres"
+	"github.com/benjamin-wright/db-operator/v2/pkg/postgres/config"
 	"github.com/jackc/pgconn"
-	"github.com/jackc/pgx/v4"
+	"github.com/jackc/pgx/v5"
+	"github.com/rs/zerolog/log"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -20,14 +21,22 @@ type Client struct {
 }
 
 func New() (*Client, error) {
-	config, err := postgres.ConfigFromEnv()
+	cfg, err := config.FromEnv()
 	if err != nil {
 		return nil, fmt.Errorf("failed getting config from environment: %+v", err)
 	}
 
-	conn, err := postgres.Connect(config)
+	cfg.Retry = false
+
+	log.Info().Interface("config", cfg).Msg("the config")
+
+	conn, err := config.Connect(cfg)
 	if err != nil {
 		return nil, fmt.Errorf("failed connecting to postgres: %+v", err)
+	}
+
+	if conn == nil {
+		return nil, errors.New("failed connecting to postgres: no error")
 	}
 
 	return &Client{conn: conn}, nil

@@ -48,8 +48,8 @@ install-operator:
     helm upgrade --install db-operator oci://docker.io/benwright/db-operator-chart \
         --kubeconfig .scratch/kubeconfig \
         --namespace db-operator \
-        --version=v1.0.5 \
-        --set image=benwright/db-operator:v1.0.5 \
+        --version=v2.0.3 \
+        --set image=benwright/db-operator:v2.0.3 \
         --wait
 
 delete-cluster:
@@ -62,9 +62,6 @@ clear-context:
         rm .scratch/kubeconfig; \
     fi
 
-tilt:
-    KUBECONFIG=.scratch/kubeconfig tilt up
-
 test:
     go test --short -v ./...
 
@@ -75,3 +72,6 @@ build PATH_TO_CODE IMAGE_TAG:
     mkdir -p "{{PATH_TO_CODE}}/dist";
     CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o "{{PATH_TO_CODE}}/dist/app" "{{PATH_TO_CODE}}/main.go";
     docker build -t "{{IMAGE_TAG}}" -f deploy/golang.Dockerfile "{{PATH_TO_CODE}}/dist"
+
+build-mig PATH_TO_CODE IMAGE_TAG:
+    docker build -t "{{IMAGE_TAG}}" -f deploy/migrations.Dockerfile "{{PATH_TO_CODE}}"

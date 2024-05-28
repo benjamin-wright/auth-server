@@ -7,7 +7,7 @@ import (
 	tokenClient "github.com/benjamin-wright/auth-server/cmd/tokens/pkg/client"
 	usersClient "github.com/benjamin-wright/auth-server/cmd/users/pkg/client"
 	"github.com/benjamin-wright/auth-server/internal/api"
-	"github.com/benjamin-wright/db-operator/pkg/redis"
+	"github.com/benjamin-wright/db-operator/v2/pkg/redis"
 	"github.com/rs/zerolog/log"
 )
 

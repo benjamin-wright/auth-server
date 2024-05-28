@@ -75,6 +75,24 @@ func (c *Client) GetUser(ctx context.Context, username string) (*GetUserResponse
 	return &response, nil
 }
 
+type ListUsersResponse struct {
+	Users []GetUserResponse `json:"users"`
+}
+
+func (c *Client) ListUsers(ctx context.Context) (*ListUsersResponse, error) {
+	var response ListUsersResponse
+	status, err := request.Get(ctx, c.url+"/", &response)
+	if err != nil {
+		return nil, err
+	}
+
+	if status != http.StatusOK {
+		return nil, fmt.Errorf("failed with status code %d", status)
+	}
+
+	return &response, nil
+}
+
 type CheckPasswordRequest struct {
 	Password string `json:"password"`
 }

@@ -17,7 +17,7 @@ spec:
         image: {{ default (printf "benwright/auth-service/users:%s" .Chart.AppVersion) .Values.users.image }}
         envFrom:
         - secretRef:
-            name: "{{ .Values.users.cockroach.secret }}"
+            name: "{{ .Values.users.postgres.secret }}"
         env:
         - name: NAMESPACE
           value: {{ .Release.Namespace }}

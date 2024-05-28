@@ -8,10 +8,10 @@ namespace = "auth-server"
 
 k8s_yaml(namespace_yaml(namespace))
 
-def build(service):
+def build(service, build_cmd="build", resource_deps=[], port_forwards=[]):
     custom_build(
         service,
-        'just build cmd/{} $EXPECTED_REF'.format(service),
+        'just {} cmd/{} $EXPECTED_REF'.format(build_cmd, service),
         [ 'cmd/{}'.format(service) ],
         ignore = [
             'dist/*',
@@ -24,12 +24,15 @@ def build(service):
         auto_init = True,
         trigger_mode = TRIGGER_MODE_MANUAL,
         labels=['auth'],
+        resource_deps=resource_deps,
+        port_forwards=port_forwards,
     )
 
-build('users')
+build('users', resource_deps=['auth-migrations'], port_forwards=['3000:80'])
 build('tokens')
 build('verify')
 build('forms')
+build('migrations', build_cmd='build-mig')
 
 k8s_yaml(helm(
     'deploy/chart',
@@ -39,8 +42,25 @@ k8s_yaml(helm(
         "cockroach.create=true",
         "redis.create=true",
         "users.image=users",
+        "users.migrations.image=migrations",
         "tokens.image=tokens",
         "verify.image=verify",
         "forms.image=forms",
     ],
 ))
+
+k8s_yaml(helm(
+    'deploy/mock',
+    'mock-home',
+    namespace=namespace,
+    set=[
+        "name=mock-app"
+    ]
+))
+
+k8s_resource(
+    'mock-app',
+    labels=[
+        'mock'
+    ]
+)

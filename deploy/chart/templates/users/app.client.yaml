@@ -1,0 +1,11 @@
+apiVersion: ponglehub.co.uk/v1alpha1
+kind: PostgresClient
+metadata:
+  name: {{ template "ph.users.full_name" . }}
+spec:
+  cluster:
+    name: {{ .Values.postgres.deployment }}
+    namespace: {{ .Release.Namespace }}
+  database: {{ .Values.users.postgres.database }}
+  username: {{ .Values.users.postgres.username }}
+  secret: {{ .Values.users.postgres.secret }}
