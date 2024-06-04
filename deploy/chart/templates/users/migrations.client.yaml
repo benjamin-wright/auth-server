@@ -9,4 +9,4 @@ spec:
   database: {{ .Values.users.postgres.database }}
   username: {{ .Values.users.migrations.username }}
   secret: {{ .Values.users.migrations.secret }}
-  owner: true
+  permission: admin

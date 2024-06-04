@@ -172,3 +172,12 @@ func (c *Client) ListUsers() ([]User, error) {
 
 	return users, nil
 }
+
+func (c *Client) DeleteUser(id string) error {
+	_, err := c.conn.Exec(context.Background(), `DELETE FROM users WHERE "id" = $1`, id)
+	if err != nil {
+		return fmt.Errorf("failed to delete user from database: %+v", err)
+	}
+
+	return nil
+}

@@ -1,8 +1,15 @@
 import { test, expect } from '@playwright/test';
+import { Client } from './test-client';
+
+const client = new Client("http://localhost:3000");
 
 test.beforeAll(async () => {
-  const res = await fetch("http://localhost:3000/users");
-  console.log(res);
+  const users = await client.getUsers();
+  console.log(users);
+  for (let i = 0; i < users.length; i++) {
+    console.log(`Deleting user ${users[i].id}`)
+    await client.deleteUser(users[i].id);
+  }
 });
 
 test('Has correct title', async ({ page }) => {
@@ -12,13 +19,11 @@ test('Has correct title', async ({ page }) => {
   await expect(page).toHaveTitle('Register');
 });
 
-const FAIL_TEST = new Error("shouldn't have reached here");
-
 test('login flow', async ({ page }) => {
   await page.goto('http://ponglehub.localhost/auth/register');
 
   // Click the get started link.
-  await page.getByLabel('Username').fill("benofbenton3");
+  await page.getByLabel('Username').fill("test-user");
   await page.getByLabel('Password', { exact: true }).fill("Password1!");
   await page.getByLabel('Confirm Password').fill("Password1!");
   await page.getByRole('button').click();

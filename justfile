@@ -50,12 +50,11 @@ wait-for-traefik:
     echo "done"
 
 install-operator:
-    kubectl create namespace db-operator --dry-run=client -o yaml | kubectl --kubeconfig .scratch/kubeconfig apply -f -
+    kubectl create namespace operators --dry-run=client -o yaml | kubectl --kubeconfig .scratch/kubeconfig apply -f -
     helm upgrade --install db-operator oci://docker.io/benwright/db-operator-chart \
         --kubeconfig .scratch/kubeconfig \
-        --namespace db-operator \
-        --version=v2.0.3 \
-        --set image=benwright/db-operator:v2.0.3 \
+        --namespace operators \
+        --version=v2.0.6 \
         --wait
 
 delete-cluster:

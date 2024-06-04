@@ -9,3 +9,4 @@ spec:
   database: {{ .Values.users.postgres.database }}
   username: {{ .Values.users.postgres.username }}
   secret: {{ .Values.users.postgres.secret }}
+  permission: writer
