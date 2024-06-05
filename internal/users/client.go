@@ -7,7 +7,7 @@ import (
 
 	"github.com/benjamin-wright/db-operator/v2/pkg/postgres/config"
 	"github.com/jackc/pgconn"
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -17,7 +17,7 @@ var ErrUserExists = errors.New("user already exists")
 var ErrComplexity = errors.New("password didn't meet complexity requirements")
 
 type Client struct {
-	conn *pgx.Conn
+	conn *pgxpool.Pool
 }
 
 func New() (*Client, error) {

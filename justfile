@@ -54,7 +54,7 @@ install-operator:
     helm upgrade --install db-operator oci://docker.io/benwright/db-operator-chart \
         --kubeconfig .scratch/kubeconfig \
         --namespace operators \
-        --version=v2.0.6 \
+        --version=v2.0.7 \
         --wait
 
 delete-cluster:

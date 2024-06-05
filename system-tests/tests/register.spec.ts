@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { Client } from './test-client';
+test.describe.configure({ mode: 'serial' });
 
+import { Client } from './test-client';
 const client = new Client("http://localhost:3000");
 
 test.beforeAll(async () => {
