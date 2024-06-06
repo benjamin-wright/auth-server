@@ -4,6 +4,7 @@ import (
 	"embed"
 	"os"
 
+	"github.com/benjamin-wright/auth-server/cmd/forms/internal/server/pages/admin"
 	"github.com/benjamin-wright/auth-server/cmd/forms/internal/server/pages/login"
 	"github.com/benjamin-wright/auth-server/cmd/forms/internal/server/pages/logout"
 	"github.com/benjamin-wright/auth-server/cmd/forms/internal/server/pages/register"
@@ -21,6 +22,7 @@ var staticContent embed.FS
 func Router(prefix string, domain string, rdb *redis.Client, tokens *tokenClient.Client, users *userClient.Client) *gin.Engine {
 	options := api.RunOptions{
 		Handlers: []api.Handler{
+			admin.Get(prefix, domain, rdb, users),
 			login.Get(prefix, domain, rdb),
 			login.Post(prefix, domain, rdb, tokens, users),
 			register.Get(prefix, domain, rdb),

@@ -64,11 +64,3 @@ k8s_resource(
         'mock'
     ]
 )
-
-local_resource(
-    'e2e',
-    'cd system-tests && npm run test',
-    trigger_mode=TRIGGER_MODE_MANUAL,
-    auto_init=False,
-    labels=['tests']
-)

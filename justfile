@@ -80,3 +80,6 @@ build PATH_TO_CODE IMAGE_TAG:
 
 build-mig PATH_TO_CODE IMAGE_TAG:
     docker build -t "{{IMAGE_TAG}}" -f deploy/migrations.Dockerfile "{{PATH_TO_CODE}}"
+
+e2e:
+    cd system-tests && npm run test

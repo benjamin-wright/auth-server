@@ -55,6 +55,7 @@ func (c *Client) AddUser(ctx context.Context, username string, password string) 
 type GetUserResponse struct {
 	ID       string `json:"id"`
 	Username string `json:"username"`
+	Admin    bool   `json:"admin"`
 }
 
 func (c *Client) GetUser(ctx context.Context, username string) (*GetUserResponse, error) {

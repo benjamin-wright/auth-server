@@ -1,0 +1,20 @@
+{{- define "content" }}
+    <h1>{{ .Common.Title }}</h1>
+
+    <ul>
+        {{- range $index, $user := .Context.Users }}
+        <li>
+            <p>{{ $user.Username }}</p>
+            <button type="checkbox" name="admin" value="{{ $user.Admin }}">Admin</button>
+            <form action="http://{{ $.Common.Domain }}/{{ $.Common.Prefix }}/admin/{{ $user.ID }}" method="delete">
+                <input type="text" name="nonce" id="nonce" value="{{ $.Context.Nonce }}" hidden>
+                <input type="submit" value="Delete">
+            </form>
+        </li>
+        {{- end }}
+    </ul>
+    
+    {{- if .Context.Error }}
+    <p class="error">{{ .Context.Error }}</p>
+    {{- end }}
+{{- end }}
