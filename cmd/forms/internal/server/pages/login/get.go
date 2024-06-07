@@ -1,27 +1,24 @@
 package login
 
 import (
-	"context"
 	_ "embed"
 	"fmt"
-	"time"
 
 	"github.com/benjamin-wright/auth-server/cmd/forms/internal/server/common"
+	"github.com/benjamin-wright/auth-server/cmd/forms/internal/sut"
 	"github.com/benjamin-wright/auth-server/internal/api"
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/redis/v8"
-	"github.com/google/uuid"
 )
 
 //go:embed get.html
 var loginContent string
 
 type GetLoginData struct {
-	Nonce string
+	SUT   string
 	Error string
 }
 
-func Get(prefix string, domain string, client *redis.Client) api.Handler {
+func Get(prefix string, domain string, suts *sut.Client) api.Handler {
 	t, err := common.New(loginContent)
 	if err != nil {
 		panic(fmt.Errorf("failed to create login template: %+v", err))
@@ -31,15 +28,9 @@ func Get(prefix string, domain string, client *redis.Client) api.Handler {
 		Method: "GET",
 		Path:   fmt.Sprintf("%s/login", prefix),
 		Handler: func(c *gin.Context) {
-			uuid, err := uuid.NewRandom()
+			uuid, err := suts.Get()
 			if err != nil {
-				c.AbortWithError(500, fmt.Errorf("failed to generate nonce: %+v", err))
-				return
-			}
-
-			cmd := client.Set(context.Background(), uuid.String(), true, 5*time.Minute)
-			if cmd.Err() != nil {
-				c.AbortWithError(500, fmt.Errorf("failed to set nonce: %+v", cmd.Err()))
+				c.AbortWithError(500, fmt.Errorf("failed to generate SUT: %+v", err))
 				return
 			}
 
@@ -51,7 +42,7 @@ func Get(prefix string, domain string, client *redis.Client) api.Handler {
 					RegisterLink: true,
 				},
 				Context: GetLoginData{
-					Nonce: uuid.String(),
+					SUT:   uuid,
 					Error: "",
 				},
 			})

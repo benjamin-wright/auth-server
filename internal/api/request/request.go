@@ -20,6 +20,10 @@ func Post(ctx context.Context, url string, body any, response any) (int, error) 
 	return request(ctx, "POST", url, body, response)
 }
 
+func Delete(ctx context.Context, url string) (int, error) {
+	return request(ctx, "DELETE", url, nil, nil)
+}
+
 func request(ctx context.Context, method string, url string, body any, response any) (int, error) {
 	postData := &bytes.Buffer{}
 

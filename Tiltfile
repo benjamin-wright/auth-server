@@ -28,11 +28,12 @@ def build(service, build_cmd="build", resource_deps=[], port_forwards=[]):
         port_forwards=port_forwards,
     )
 
+build('migrations', build_cmd='build-mig')
 build('users', resource_deps=['auth-migrations'], port_forwards=['3000:80'])
+build('init', resource_deps=['auth-users'])
 build('tokens')
 build('verify')
 build('forms')
-build('migrations', build_cmd='build-mig')
 
 k8s_yaml(helm(
     'deploy/chart',
@@ -43,6 +44,8 @@ k8s_yaml(helm(
         "redis.create=true",
         "users.image=users",
         "users.migrations.image=migrations",
+        "users.init.image=init",
+        "users.init.admin.password=Password1!",
         "tokens.image=tokens",
         "verify.image=verify",
         "forms.image=forms",

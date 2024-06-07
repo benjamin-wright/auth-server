@@ -34,6 +34,7 @@ func putPassword(c *users.Client) api.Handler {
 			ctx.JSON(http.StatusOK, client.CheckPasswordResponse{
 				Username: user.Name,
 				ID:       user.ID,
+				Admin:    user.Admin,
 			})
 		},
 	}

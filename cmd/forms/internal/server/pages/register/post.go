@@ -4,23 +4,23 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/benjamin-wright/auth-server/cmd/forms/internal/sut"
 	tokenClient "github.com/benjamin-wright/auth-server/cmd/tokens/pkg/client"
 	userClient "github.com/benjamin-wright/auth-server/cmd/users/pkg/client"
 	"github.com/benjamin-wright/auth-server/internal/api"
 	usersLib "github.com/benjamin-wright/auth-server/internal/users"
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/redis/v8"
 	"github.com/rs/zerolog/log"
 )
 
 type RegisterForm struct {
-	Nonce           string `form:"nonce" binding:"required"`
+	SUT             string `form:"sut" binding:"required"`
 	Username        string `form:"username" binding:"required"`
 	Password        string `form:"password" binding:"required"`
 	ConfirmPassword string `form:"confirm-password" binding:"required"`
 }
 
-func Post(prefix string, domain string, rdb *redis.Client, tokens *tokenClient.Client, users *userClient.Client) api.Handler {
+func Post(prefix string, domain string, suts *sut.Client, tokens *tokenClient.Client, users *userClient.Client) api.Handler {
 	return api.Handler{
 		Method: "POST",
 		Path:   fmt.Sprintf("%s/register", prefix),
@@ -33,19 +33,18 @@ func Post(prefix string, domain string, rdb *redis.Client, tokens *tokenClient.C
 				return
 			}
 
-			cmd := rdb.Get(c, data.Nonce)
-			if cmd.Err() != nil {
-				log.Warn().Err(cmd.Err()).Msgf("failed to get nonce: %s", data.Nonce)
-				c.Redirect(302, "http://"+domain+"/"+prefix+"/register?error=nonce")
+			ok, err := suts.Check(data.SUT)
+			if err != nil {
+				log.Error().Err(err).Msg("failed to check sut")
+				c.Redirect(302, "http://"+domain+"/"+prefix+"/register?error=server")
 				return
 			}
 
-			defer func() {
-				delCmd := rdb.Del(c, data.Nonce)
-				if delCmd.Err() != nil {
-					log.Error().Err(delCmd.Err()).Msg("failed to delete nonce")
-				}
-			}()
+			if !ok {
+				log.Warn().Msg("sut is invalid")
+				c.Redirect(302, "http://"+domain+"/"+prefix+"/register?error=sut")
+				return
+			}
 
 			if !usersLib.CheckPasswordComplexity(data.Password) {
 				log.Warn().Msg("password does not meet complexity requirements")
@@ -59,7 +58,7 @@ func Post(prefix string, domain string, rdb *redis.Client, tokens *tokenClient.C
 				return
 			}
 
-			response, err := users.AddUser(context.Background(), data.Username, data.Password)
+			response, err := users.AddUser(context.Background(), data.Username, data.Password, false)
 			if err != nil {
 				if err == userClient.ErrUserExists {
 					log.Warn().Err(err).Msg("user already exists")

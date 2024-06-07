@@ -5,6 +5,16 @@ metadata:
 spec:
   routes:
   - kind: Rule
+    match: PathPrefix(`{{ .Values.forms.urlPrefix }}/admin`)
+    middlewares:
+    - name: auth-validator
+    services:
+    - kind: Service
+      name: {{ template "ph.forms.full_name" . }}
+      namespace: {{ .Release.Namespace }}
+      port: 80
+      scheme: http
+  - kind: Rule
     match: PathPrefix(`{{ .Values.forms.urlPrefix }}`)
     services:
     - kind: Service

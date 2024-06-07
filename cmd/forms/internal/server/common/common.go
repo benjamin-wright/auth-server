@@ -13,6 +13,7 @@ type CommonData struct {
 	Title        string
 	LoginLink    bool
 	RegisterLink bool
+	Logout       bool
 }
 
 type RenderData struct {

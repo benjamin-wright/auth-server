@@ -25,17 +25,19 @@ func New(URL string) *Client {
 type AddUserRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
+	Admin    bool   `json:"admin"`
 }
 
 type AddUserResponse struct {
 	ID string `json:"id"`
 }
 
-func (c *Client) AddUser(ctx context.Context, username string, password string) (*AddUserResponse, error) {
+func (c *Client) AddUser(ctx context.Context, username string, password string, admin bool) (*AddUserResponse, error) {
 	var response AddUserResponse
 	status, err := request.Post(ctx, c.url, AddUserRequest{
 		Username: username,
 		Password: password,
+		Admin:    admin,
 	}, &response)
 	if err != nil {
 		return nil, err
@@ -101,6 +103,7 @@ type CheckPasswordRequest struct {
 type CheckPasswordResponse struct {
 	ID       string `json:"id"`
 	Username string `json:"username"`
+	Admin    bool   `json:"admin"`
 }
 
 func (c *Client) CheckPassword(ctx context.Context, username string, password string) (*CheckPasswordResponse, bool, error) {
@@ -127,4 +130,17 @@ func (c *Client) CheckPassword(ctx context.Context, username string, password st
 	}
 
 	return &response, true, nil
+}
+
+func (c *Client) DeleteUser(ctx context.Context, id string) error {
+	status, err := request.Delete(ctx, fmt.Sprintf("%s/%s", c.url, id))
+	if err != nil {
+		return err
+	}
+
+	if status != http.StatusNoContent {
+		return fmt.Errorf("failed with status code %d", status)
+	}
+
+	return nil
 }

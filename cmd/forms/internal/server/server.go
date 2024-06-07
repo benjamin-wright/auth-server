@@ -8,25 +8,26 @@ import (
 	"github.com/benjamin-wright/auth-server/cmd/forms/internal/server/pages/login"
 	"github.com/benjamin-wright/auth-server/cmd/forms/internal/server/pages/logout"
 	"github.com/benjamin-wright/auth-server/cmd/forms/internal/server/pages/register"
+	"github.com/benjamin-wright/auth-server/cmd/forms/internal/sut"
 	tokenClient "github.com/benjamin-wright/auth-server/cmd/tokens/pkg/client"
 	userClient "github.com/benjamin-wright/auth-server/cmd/users/pkg/client"
 	"github.com/benjamin-wright/auth-server/internal/api"
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/redis/v8"
 	"github.com/rs/zerolog/log"
 )
 
 //go:embed static
 var staticContent embed.FS
 
-func Router(prefix string, domain string, rdb *redis.Client, tokens *tokenClient.Client, users *userClient.Client) *gin.Engine {
+func Router(prefix string, domain string, tokens *tokenClient.Client, users *userClient.Client, suts *sut.Client) *gin.Engine {
 	options := api.RunOptions{
 		Handlers: []api.Handler{
-			admin.Get(prefix, domain, rdb, users),
-			login.Get(prefix, domain, rdb),
-			login.Post(prefix, domain, rdb, tokens, users),
-			register.Get(prefix, domain, rdb),
-			register.Post(prefix, domain, rdb, tokens, users),
+			admin.Get(prefix, domain, suts, users),
+			admin.Delete(prefix, domain, suts, users),
+			login.Get(prefix, domain, suts),
+			login.Post(prefix, domain, suts, tokens, users),
+			register.Get(prefix, domain, suts),
+			register.Post(prefix, domain, suts, tokens, users),
 			logout.Get(prefix, domain),
 		},
 	}

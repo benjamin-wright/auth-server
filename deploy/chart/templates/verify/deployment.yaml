@@ -16,5 +16,7 @@ spec:
       - name: operator
         image: {{ default (printf "benwright/auth-service/verify:%s" .Chart.AppVersion) .Values.verify.image }}
         env:
-        - name: NAMESPACE
-          value: {{ .Release.Namespace }}
+        - name: LOGIN_URL
+          value: {{ .Values.verify.loginUrl }}
+        - name: TOKENS_API_URL
+          value: "http://{{ template "ph.tokens.full_name" . }}.{{ .Release.Namespace }}.svc.cluster.local"

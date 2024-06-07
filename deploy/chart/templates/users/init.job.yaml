@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "ph.init.full_name" . }}
+spec:
+  template:
+    metadata:
+      name: {{ template "ph.init.full_name" . }}
+    spec:
+      containers:
+      - name: init
+        image: {{ .Values.users.init.image }}
+        env:
+        - name: USERS_URL
+          value: "http://{{ template "ph.users.full_name" . }}.{{ .Release.Namespace }}.svc.cluster.local"
+        - name: USERS_ADMIN_USERNAME
+          value: {{ .Values.users.init.admin.username }}
+        - name: USERS_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: "{{ .Values.users.init.secret }}"
+              key: password
+      restartPolicy: Never
+  backoffLimit: 0
+  

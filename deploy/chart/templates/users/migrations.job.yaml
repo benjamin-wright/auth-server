@@ -14,5 +14,5 @@ spec:
         - secretRef:
             name: "{{ .Values.users.migrations.secret }}"
       restartPolicy: Never
-  backoffLimit: 4
+  backoffLimit: 0
   

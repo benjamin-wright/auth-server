@@ -1,18 +1,50 @@
+{{- define "header" }}
+    <script>
+        const SUT = "{{ .Context.SUT }}";
+        const url = "http://{{ $.Common.Domain }}/{{ $.Common.Prefix }}"
+
+        function deleteUser(id) {
+            fetch(`${url}/admin/user/${id}?sut=${encodeURIComponent(SUT)}`, {
+                method: 'DELETE',
+            }).then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    response.text().then(text => {
+                        alert(text);
+                    });
+                }
+            }).catch(error => {
+                alert(error);
+            })
+        }
+    </script>
+{{- end }}
 {{- define "content" }}
     <h1>{{ .Common.Title }}</h1>
 
-    <ul>
+    <p>Caller: {{ .Context.Caller }}</p>
+
+    <table>
+        <tr>
+            <th>Username</th>
+            <th>Admin</th>
+            <th></th>
+        </tr>
         {{- range $index, $user := .Context.Users }}
-        <li>
-            <p>{{ $user.Username }}</p>
-            <button type="checkbox" name="admin" value="{{ $user.Admin }}">Admin</button>
-            <form action="http://{{ $.Common.Domain }}/{{ $.Common.Prefix }}/admin/{{ $user.ID }}" method="delete">
-                <input type="text" name="nonce" id="nonce" value="{{ $.Context.Nonce }}" hidden>
-                <input type="submit" value="Delete">
-            </form>
-        </li>
+        <tr>
+            <td>
+                <p>{{ $user.Username }}</p>
+            </td>
+            <td>
+                <input type="checkbox" name="admin" {{ if $user.Admin }}checked{{ end }} {{ if eq $.Context.Caller $user.ID }}disabled{{ end }} />
+            </td>
+            <td>
+                <button type="submit" onclick="deleteUser('{{ $user.ID }}')" {{ if eq $.Context.Caller $user.ID }}disabled{{ end }}>Delete</button>
+            </td>
+        </tr>
         {{- end }}
-    </ul>
+    </table>
     
     {{- if .Context.Error }}
     <p class="error">{{ .Context.Error }}</p>

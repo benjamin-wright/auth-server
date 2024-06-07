@@ -4,10 +4,10 @@ import (
 	"os"
 
 	"github.com/benjamin-wright/auth-server/cmd/forms/internal/server"
+	"github.com/benjamin-wright/auth-server/cmd/forms/internal/sut"
 	tokenClient "github.com/benjamin-wright/auth-server/cmd/tokens/pkg/client"
 	usersClient "github.com/benjamin-wright/auth-server/cmd/users/pkg/client"
 	"github.com/benjamin-wright/auth-server/internal/api"
-	"github.com/benjamin-wright/db-operator/v2/pkg/redis"
 	"github.com/rs/zerolog/log"
 )
 
@@ -18,18 +18,11 @@ func main() {
 	prefix := os.Getenv("FORMS_PREFIX")
 	tokens := tokenClient.New(os.Getenv("TOKENS_URL"))
 	users := usersClient.New(os.Getenv("USERS_URL"))
-
-	cfg, err := redis.ConfigFromEnv()
+	suts, err := sut.New()
 	if err != nil {
-		log.Error().Err(err).Msg("Error getting redis config")
-		return
+		log.Error().Err(err).Msg("Error getting suts client")
+		os.Exit(1)
 	}
 
-	client, err := redis.Connect(cfg)
-	if err != nil {
-		log.Error().Err(err).Msg("Error connecting to redis")
-		return
-	}
-
-	api.Run(server.Router(prefix, domain, client, tokens, users))
+	api.Run(server.Router(prefix, domain, tokens, users, suts))
 }

@@ -1,5 +1,5 @@
 prefix: auth
-domain: ponglehub.co.uk
+domain: ponglehub.com.localhost
 
 postgres:
   create: false
@@ -17,6 +17,13 @@ users:
     # image:
     username: "usermigrations"
     secret: "user-migrations-pg"
+  init:
+    name: "init"
+    secret: "user-init"
+    # image:
+    admin:
+      username: "admin"
+      # password: 
   # image:
   name: users
   replicas: 1
@@ -34,6 +41,7 @@ verify:
   # image:
   name: verify
   replicas: 1
+  loginUrl: "http://ponglehub.com.localhost/auth/login"
 
 forms:
   # image:

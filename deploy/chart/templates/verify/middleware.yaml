@@ -6,4 +6,4 @@ spec:
   forwardAuth:
     address: http://{{ template "ph.verify.full_name" . }}.{{ .Release.Namespace }}.svc.cluster.local
     authResponseHeaders:
-    - X-Auth-User
+    - x-auth-user

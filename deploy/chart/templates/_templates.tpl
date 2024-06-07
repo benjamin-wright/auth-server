@@ -1,3 +1,7 @@
+{{- define "ph.init.full_name" -}}
+{{ printf "%s-%s" .Values.prefix .Values.users.init.name }}
+{{- end -}}
+
 {{- define "ph.migrations.full_name" -}}
 {{ printf "%s-%s" .Values.prefix .Values.users.migrations.name }}
 {{- end -}}

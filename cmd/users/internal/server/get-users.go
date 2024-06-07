@@ -28,6 +28,7 @@ func getUsers(c *users.Client) api.Handler {
 				response.Users[i] = client.GetUserResponse{
 					ID:       user.ID,
 					Username: user.Name,
+					Admin:    user.Admin,
 				}
 			}
 

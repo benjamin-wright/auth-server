@@ -5,11 +5,13 @@
     <meta charset="utf-8">
     <link rel="stylesheet" href="http://{{ .Common.Domain }}/{{ .Common.Prefix }}/static/styles.css">
     <link rel="icon" href="http://{{ .Common.Domain }}/{{ .Common.Prefix }}/static/favicon.ico">
+{{ template "header" . }}
 </head>
 <body>
     <nav>
         {{ if .Common.LoginLink }}<a href="http://{{.Common.Domain}}/{{ .Common.Prefix }}/login">login</a>{{ end }}
         {{ if .Common.RegisterLink }}<a href="http://{{.Common.Domain}}/{{ .Common.Prefix }}/register">register</a>{{ end }}
+        {{ if .Common.Logout }}<a href="http://{{.Common.Domain}}/{{ .Common.Prefix }}/logout">logout</a>{{ end }}
     </nav>
 {{ template "content" . }}
 </html>

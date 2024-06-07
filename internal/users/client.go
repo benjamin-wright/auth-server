@@ -56,13 +56,15 @@ func (c *Client) AddUser(user User) (string, error) {
 		return "", ErrComplexity
 	}
 
+	log.Info().Interface("user", user).Msg("adding user")
+
 	bytes, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return "", fmt.Errorf("failed to generate password hash: %+v", err)
 	}
 	hash := string(bytes)
 
-	rows, err := c.conn.Query(context.Background(), `INSERT INTO users("name", "password") VALUES ($1, $2) RETURNING "id"`, user.Name, hash)
+	rows, err := c.conn.Query(context.Background(), `INSERT INTO users("name", "password", "admin") VALUES ($1, $2, $3) RETURNING "id"`, user.Name, hash, user.Admin)
 	if err != nil {
 		return "", fmt.Errorf("failed to add user to database: %+v", err)
 	}
@@ -90,7 +92,7 @@ func (c *Client) AddUser(user User) (string, error) {
 var ErrPasswordMismatch = errors.New("password mismatch")
 
 func (c *Client) CheckPassword(user User) (*User, error) {
-	rows, err := c.conn.Query(context.Background(), `SELECT "id", "password" FROM users WHERE "name" = $1`, user.Name)
+	rows, err := c.conn.Query(context.Background(), `SELECT "id", "password", "admin" FROM users WHERE "name" = $1`, user.Name)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user from database: %+v", err)
 	}
@@ -101,7 +103,7 @@ func (c *Client) CheckPassword(user User) (*User, error) {
 
 	for rows.Next() {
 		numUsers += 1
-		if err = rows.Scan(&user.ID, &passwordHash); err != nil {
+		if err = rows.Scan(&user.ID, &passwordHash, &user.Admin); err != nil {
 			return nil, fmt.Errorf("failed to parse new user ID: %+v", err)
 		}
 	}
@@ -123,7 +125,7 @@ func (c *Client) CheckPassword(user User) (*User, error) {
 }
 
 func (c *Client) GetUser(name string) (*User, error) {
-	rows, err := c.conn.Query(context.Background(), `SELECT "id" FROM users WHERE "name" = $1`, name)
+	rows, err := c.conn.Query(context.Background(), `SELECT "id", "admin" FROM users WHERE "name" = $1`, name)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user from database: %+v", err)
 	}
@@ -136,7 +138,7 @@ func (c *Client) GetUser(name string) (*User, error) {
 
 	for rows.Next() {
 		numUsers += 1
-		if err = rows.Scan(&user.ID); err != nil {
+		if err = rows.Scan(&user.ID, &user.Admin); err != nil {
 			return nil, fmt.Errorf("failed to parse new user ID: %+v", err)
 		}
 	}
@@ -153,7 +155,7 @@ func (c *Client) GetUser(name string) (*User, error) {
 }
 
 func (c *Client) ListUsers() ([]User, error) {
-	rows, err := c.conn.Query(context.Background(), `SELECT "id", "name", "password" FROM users`)
+	rows, err := c.conn.Query(context.Background(), `SELECT "id", "name", "password", "admin" FROM users`)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user from database: %+v", err)
 	}
@@ -163,7 +165,7 @@ func (c *Client) ListUsers() ([]User, error) {
 
 	for rows.Next() {
 		user := User{}
-		if err = rows.Scan(&user.ID, &user.Name, &user.Password); err != nil {
+		if err = rows.Scan(&user.ID, &user.Name, &user.Password, &user.Admin); err != nil {
 			return nil, fmt.Errorf("failed to parse new user ID: %+v", err)
 		}
 

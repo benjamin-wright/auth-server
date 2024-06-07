@@ -27,6 +27,7 @@ func getUser(c *users.Client) api.Handler {
 			ctx.JSON(http.StatusOK, client.GetUserResponse{
 				ID:       user.ID,
 				Username: user.Name,
+				Admin:    user.Admin,
 			})
 		},
 	}
