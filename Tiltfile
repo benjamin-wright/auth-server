@@ -29,7 +29,7 @@ def build(service, build_cmd="build", resource_deps=[], port_forwards=[]):
     )
 
 build('migrations', build_cmd='build-mig')
-build('users', resource_deps=['auth-migrations'], port_forwards=['3000:80'])
+build('users', resource_deps=['auth-migrations'])
 build('init', resource_deps=['auth-users'])
 build('tokens')
 build('verify')
@@ -47,6 +47,7 @@ k8s_yaml(helm(
         "users.init.image=init",
         "users.init.admin.password=Password1!",
         "tokens.image=tokens",
+        "tokens.keyfile=super-secret",
         "verify.image=verify",
         "forms.image=forms",
     ],

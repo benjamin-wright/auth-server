@@ -3,18 +3,18 @@ package main
 import (
 	"os"
 
-	"github.com/benjamin-wright/auth-server/cmd/tokens/pkg/client"
 	"github.com/benjamin-wright/auth-server/cmd/verify/internal/handlers"
 	"github.com/benjamin-wright/auth-server/internal/api"
+	"github.com/benjamin-wright/auth-server/internal/tokens"
 )
 
 func main() {
 	loginURL := os.Getenv("LOGIN_URL")
-	tokens := client.New(os.Getenv("TOKENS_API_URL"))
+	keyfile := tokens.Keyfile(os.Getenv("TOKEN_KEYFILE"))
 
 	api.Run(api.Router(api.RunOptions{
 		Handlers: []api.Handler{
-			handlers.Verify(tokens, loginURL),
+			handlers.Auth(keyfile, loginURL),
 		},
 	}))
 }

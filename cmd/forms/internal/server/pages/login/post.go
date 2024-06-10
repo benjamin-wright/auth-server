@@ -57,15 +57,25 @@ func Post(prefix string, domain string, suts *sut.Client, tokens *tokenClient.Cl
 				return
 			}
 
-			token, err := tokens.GetLoginToken(res.ID)
-			if err != nil {
-				log.Error().Err(err).Msg("failed to get login token")
-				c.Redirect(302, "http://"+domain+"/"+prefix+"/login?error=server")
-				return
+			if res.Admin {
+				token, err := tokens.GetAdminToken(res.ID)
+				if err != nil {
+					log.Error().Err(err).Msg("failed to get admin token")
+					c.Redirect(302, "http://"+domain+"/"+prefix+"/login?error=server")
+					return
+				}
+				c.SetCookie("ponglehub.login", token.Token, token.MaxAge, "", domain, false, true)
+				c.Redirect(302, "http://"+domain+"/auth/admin")
+			} else {
+				token, err := tokens.GetLoginToken(res.ID)
+				if err != nil {
+					log.Error().Err(err).Msg("failed to get login token")
+					c.Redirect(302, "http://"+domain+"/"+prefix+"/login?error=server")
+					return
+				}
+				c.SetCookie("ponglehub.login", token.Token, token.MaxAge, "", domain, false, true)
+				c.Redirect(302, "http://"+domain+"/home")
 			}
-
-			c.SetCookie("ponglehub.login", token.Token, token.MaxAge, "", domain, false, true)
-			c.Redirect(302, "http://"+domain+"/home")
 		},
 	}
 }

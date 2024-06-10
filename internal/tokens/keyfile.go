@@ -13,17 +13,17 @@ var Issuer = "PongleHub"
 type Keyfile []byte
 
 type Claims struct {
-	Subject string
-	Kind    string
+	Subject   string
+	Audiences []string
 }
 
-func (k *Keyfile) New(id string, kind string, expiration time.Duration) (string, error) {
+func (k *Keyfile) New(id string, audiences []string, expiration time.Duration) (string, error) {
 	token := jwt.NewWithClaims(
 		jwt.SigningMethodHS256,
 		jwt.RegisteredClaims{
 			Subject:   id,
 			Issuer:    Issuer,
-			Audience:  jwt.ClaimStrings{kind},
+			Audience:  audiences,
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			NotBefore: jwt.NewNumericDate(time.Now()),
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(expiration)),
@@ -74,17 +74,13 @@ func (k *Keyfile) Parse(token string) (Claims, error) {
 		return Claims{}, fmt.Errorf("error getting audience: %+v", err)
 	}
 
-	if len(audience) != 1 {
-		return Claims{}, fmt.Errorf("expected one audience, got %d", len(audience))
-	}
-
 	subject, err := t.Claims.GetSubject()
 	if err != nil {
 		return Claims{}, fmt.Errorf("error getting subject: %+v", err)
 	}
 
 	return Claims{
-		Subject: subject,
-		Kind:    audience[0],
+		Subject:   subject,
+		Audiences: audience,
 	}, nil
 }

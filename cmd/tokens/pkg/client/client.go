@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"net/url"
 
 	"github.com/benjamin-wright/auth-server/internal/api/request"
 )
@@ -36,13 +35,14 @@ func (c *Client) GetLoginToken(subject string) (*GetLoginTokenResponse, error) {
 	return &response, nil
 }
 
-type ValidateLoginTokenResponse struct {
-	Subject string `json:"subject"`
+type GetAdminTokenResponse struct {
+	Token  string `json:"token"`
+	MaxAge int    `json:"maxAge"`
 }
 
-func (c *Client) ValidateLoginToken(token string) (*ValidateLoginTokenResponse, error) {
-	var response ValidateLoginTokenResponse
-	status, err := request.Get(context.TODO(), c.url+"/validate/login?token="+url.PathEscape(token), &response)
+func (c *Client) GetAdminToken(subject string) (*GetAdminTokenResponse, error) {
+	var response GetAdminTokenResponse
+	status, err := request.Get(context.TODO(), c.url+"/"+subject+"/admin", &response)
 	if err != nil {
 		return nil, err
 	}

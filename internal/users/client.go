@@ -56,8 +56,6 @@ func (c *Client) AddUser(user User) (string, error) {
 		return "", ErrComplexity
 	}
 
-	log.Info().Interface("user", user).Msg("adding user")
-
 	bytes, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return "", fmt.Errorf("failed to generate password hash: %+v", err)
@@ -176,6 +174,7 @@ func (c *Client) ListUsers() ([]User, error) {
 }
 
 func (c *Client) DeleteUser(id string) error {
+	log.Info().Str("id", id).Msg("deleting user")
 	_, err := c.conn.Exec(context.Background(), `DELETE FROM users WHERE "id" = $1`, id)
 	if err != nil {
 		return fmt.Errorf("failed to delete user from database: %+v", err)

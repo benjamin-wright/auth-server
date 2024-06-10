@@ -11,21 +11,21 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GetLoginToken(t tokens.Keyfile) api.Handler {
+func GetAdminToken(t tokens.Keyfile) api.Handler {
 	return api.Handler{
 		Method: "GET",
-		Path:   "/:subject/login",
+		Path:   "/:subject/admin",
 		Handler: func(c *gin.Context) {
 			subject := c.Param("subject")
 
-			loginToken, err := t.New(subject, []string{"login"}, time.Hour)
+			token, err := t.New(subject, []string{"login", "admin"}, time.Hour)
 			if err != nil {
 				c.AbortWithError(500, fmt.Errorf("failed to create login token: %+v", err))
 				return
 			}
 
 			c.JSON(http.StatusOK, client.GetLoginTokenResponse{
-				Token:  loginToken,
+				Token:  token,
 				MaxAge: int(time.Hour / time.Second),
 			})
 		},

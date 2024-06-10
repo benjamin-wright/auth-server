@@ -23,28 +23,29 @@
 {{- define "content" }}
     <h1>{{ .Common.Title }}</h1>
 
-    <p>Caller: {{ .Context.Caller }}</p>
-
-    <table>
-        <tr>
-            <th>Username</th>
-            <th>Admin</th>
-            <th></th>
-        </tr>
-        {{- range $index, $user := .Context.Users }}
-        <tr>
-            <td>
-                <p>{{ $user.Username }}</p>
-            </td>
-            <td>
-                <input type="checkbox" name="admin" {{ if $user.Admin }}checked{{ end }} {{ if eq $.Context.Caller $user.ID }}disabled{{ end }} />
-            </td>
-            <td>
-                <button type="submit" onclick="deleteUser('{{ $user.ID }}')" {{ if eq $.Context.Caller $user.ID }}disabled{{ end }}>Delete</button>
-            </td>
-        </tr>
-        {{- end }}
-    </table>
+    <section>
+        <h2>Users</h2>
+        <table>
+            <tr>
+                <th>Username</th>
+                <th>Admin</th>
+                <th></th>
+            </tr>
+            {{- range $index, $user := .Context.Users }}
+            <tr data-testid="data-row">
+                <td>
+                    <p>{{ $user.Username }}</p>
+                </td>
+                <td>
+                    <input type="checkbox" name="admin" {{ if $user.Admin }}checked{{ end }} {{ if eq $.Context.Caller $user.ID }}disabled{{ end }} />
+                </td>
+                <td>
+                    <button type="submit" name="delete" onclick="deleteUser('{{ $user.ID }}')" {{ if eq $.Context.Caller $user.ID }}disabled{{ end }}>Delete</button>
+                </td>
+            </tr>
+            {{- end }}
+        </table>
+    </section>
     
     {{- if .Context.Error }}
     <p class="error">{{ .Context.Error }}</p>

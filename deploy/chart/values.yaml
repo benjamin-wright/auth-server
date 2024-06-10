@@ -34,6 +34,7 @@ users:
 
 tokens:
   # image:
+  # keyfile:
   name: tokens
   replicas: 1
 

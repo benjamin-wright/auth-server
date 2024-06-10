@@ -1,12 +1,38 @@
+:root {
+    --background-color: rgb(146, 242, 228);
+    --foreground-color: rgb(63, 63, 63);
+}
+
+p {
+    margin: 0;
+}
+
 body {
-    background-color: aqua;
+    background-color: var(--background-color);
+    color: var(--foreground-color);
 }
 
 table {
     border-spacing: 0;
+    width: 66%;
+    border-radius: 0.5em;
+    border: 2px solid var(--foreground-color);
+    text-align: center;
 }
 
 table tr:first-child {
-    background: black;
-    color: aqua;
+    background: var(--foreground-color);
+    color: var(--background-color)
 }
+
+th, td {
+    padding: 0.5em;
+}
+/* 
+th:first-child {
+    border-radius: 0.5em 0 0 0;
+}
+
+th:last-child {
+    border-radius: 0 0.5em 0 0;
+} */

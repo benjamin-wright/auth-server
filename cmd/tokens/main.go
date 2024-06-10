@@ -14,7 +14,7 @@ func main() {
 	api.Run(api.Router(api.RunOptions{
 		Handlers: []api.Handler{
 			handlers.GetLoginToken(keyfile),
-			handlers.ValidateLoginToken(keyfile),
+			handlers.GetAdminToken(keyfile),
 		},
 	}))
 }

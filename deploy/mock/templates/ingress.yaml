@@ -7,6 +7,7 @@ spec:
   - kind: Rule
     match: PathPrefix(`/home`)
     middlewares:
+    - name: auth-login
     - name: {{ .Values.name }}-prefix
     services:
     - kind: Service

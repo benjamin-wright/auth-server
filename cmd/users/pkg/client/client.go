@@ -133,7 +133,7 @@ func (c *Client) CheckPassword(ctx context.Context, username string, password st
 }
 
 func (c *Client) DeleteUser(ctx context.Context, id string) error {
-	status, err := request.Delete(ctx, fmt.Sprintf("%s/%s", c.url, id))
+	status, err := request.Delete(ctx, fmt.Sprintf("%s/id/%s", c.url, id))
 	if err != nil {
 		return err
 	}

@@ -7,7 +7,7 @@ spec:
   - kind: Rule
     match: PathPrefix(`{{ .Values.forms.urlPrefix }}/admin`)
     middlewares:
-    - name: auth-validator
+    - name: auth-admin
     services:
     - kind: Service
       name: {{ template "ph.forms.full_name" . }}
