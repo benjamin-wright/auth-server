@@ -1,10 +1,9 @@
 package server
 
 import (
-	"embed"
-	"os"
-
 	"github.com/benjamin-wright/auth-server/cmd/forms/internal/server/pages/admin"
+	"github.com/benjamin-wright/auth-server/cmd/forms/internal/server/pages/admin/invite"
+	"github.com/benjamin-wright/auth-server/cmd/forms/internal/server/pages/admin/user"
 	"github.com/benjamin-wright/auth-server/cmd/forms/internal/server/pages/login"
 	"github.com/benjamin-wright/auth-server/cmd/forms/internal/server/pages/logout"
 	"github.com/benjamin-wright/auth-server/cmd/forms/internal/server/pages/register"
@@ -16,14 +15,13 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-//go:embed static
-var staticContent embed.FS
-
 func Router(prefix string, domain string, tokens *tokenClient.Client, users *userClient.Client, suts *sut.Client) *gin.Engine {
 	options := api.RunOptions{
 		Handlers: []api.Handler{
 			admin.Get(prefix, domain, suts, users),
-			admin.Delete(prefix, domain, suts, users),
+			user.Delete(prefix, domain, suts, users),
+			invite.Get(prefix, domain, suts),
+			invite.Post(prefix, domain, suts, users),
 			login.Get(prefix, domain, suts),
 			login.Post(prefix, domain, suts, tokens, users),
 			register.Get(prefix, domain, suts),
@@ -32,27 +30,12 @@ func Router(prefix string, domain string, tokens *tokenClient.Client, users *use
 		},
 	}
 
-	stat, err := os.Stat("/www/static")
-	if err == nil && stat.IsDir() {
-		log.Info().Msg("using static files from /www/static")
-
-		options.StaticFiles = []api.FileHandler{
-			{
-				Path:   prefix + "/static",
-				FSPath: "/www/static",
-				Files:  []string{"styles.css", "favicon.ico"},
-			},
-		}
-
-		return api.Router(options)
-	}
-
-	log.Info().Msg("using default files from embedded content")
-	options.EmbeddedFileHandlers = []api.EmbeddedFileHandler{
+	log.Info().Msg("using static files from /www/static")
+	options.StaticFiles = []api.FileHandler{
 		{
 			Path:   prefix + "/static",
-			FSPath: "static",
-			FS:     staticContent,
+			FSPath: "/www/static",
+			Files:  []string{"styles.css", "favicon.ico"},
 		},
 	}
 

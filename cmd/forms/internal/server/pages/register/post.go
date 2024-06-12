@@ -8,7 +8,7 @@ import (
 	tokenClient "github.com/benjamin-wright/auth-server/cmd/tokens/pkg/client"
 	userClient "github.com/benjamin-wright/auth-server/cmd/users/pkg/client"
 	"github.com/benjamin-wright/auth-server/internal/api"
-	usersLib "github.com/benjamin-wright/auth-server/internal/users"
+	"github.com/benjamin-wright/auth-server/internal/password"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 )
@@ -46,7 +46,7 @@ func Post(prefix string, domain string, suts *sut.Client, tokens *tokenClient.Cl
 				return
 			}
 
-			if !usersLib.CheckPasswordComplexity(data.Password) {
+			if !password.IsComplex(data.Password) {
 				log.Warn().Msg("password does not meet complexity requirements")
 				c.Redirect(302, "http://"+domain+"/"+prefix+"/register?error=complexity")
 				return

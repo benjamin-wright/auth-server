@@ -19,19 +19,19 @@ func main() {
 }
 
 func run(c *client.Client, user string, password string) error {
-	// resp, err := c.ListUsers(context.TODO())
-	// if err != nil {
-	// 	return fmt.Errorf("failed to list users: %w", err)
-	// }
+	resp, err := c.ListUsers(context.TODO())
+	if err != nil {
+		return fmt.Errorf("failed to list users: %w", err)
+	}
 
-	// if len(resp.Users) > 0 {
-	// 	log.Info().Msg("Existing users found, aborting init process")
-	// 	return nil
-	// }
+	if len(resp.Users) > 0 {
+		log.Info().Msg("Existing users found, aborting init process")
+		return nil
+	}
 
 	log.Info().Msg("No users found, initializing database")
 
-	_, err := c.AddUser(context.TODO(), user, password, true)
+	_, err = c.AddUser(context.TODO(), user, password, true)
 	if err != nil {
 		return fmt.Errorf("failed to add user: %w", err)
 	}

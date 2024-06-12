@@ -8,7 +8,7 @@ namespace = "auth-server"
 
 k8s_yaml(namespace_yaml(namespace))
 
-def build(service, build_cmd="build", resource_deps=[], port_forwards=[]):
+def build(service, build_cmd="build", resource_deps=[], port_forwards=[], live_update=[]):
     custom_build(
         service,
         'just {} cmd/{} $EXPECTED_REF'.format(build_cmd, service),
@@ -16,7 +16,8 @@ def build(service, build_cmd="build", resource_deps=[], port_forwards=[]):
         ignore = [
             'dist/*',
             '**/*_test.go'
-        ]
+        ],
+        live_update = live_update,
     )
 
     k8s_resource(
@@ -33,7 +34,7 @@ build('users', resource_deps=['auth-migrations'])
 build('init', resource_deps=['auth-users'])
 build('tokens')
 build('verify')
-build('forms')
+build('forms', live_update=[sync('./cmd/forms/static', '/www/static')])
 
 k8s_yaml(helm(
     'deploy/chart',

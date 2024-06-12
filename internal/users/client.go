@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/benjamin-wright/auth-server/internal/password"
 	"github.com/benjamin-wright/db-operator/v2/pkg/postgres/config"
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -52,7 +53,7 @@ func (c *Client) DeleteAllUsers() error {
 }
 
 func (c *Client) AddUser(user User) (string, error) {
-	if !CheckPasswordComplexity(user.Password) {
+	if !password.IsComplex(user.Password) {
 		return "", ErrComplexity
 	}
 

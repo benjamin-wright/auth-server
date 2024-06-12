@@ -1,14 +1,18 @@
 {{- define "header" }}
+<script>
+    function navigate(path) {
+        window.location.href = `http://{{ .Common.Domain }}/{{ .Common.Prefix }}/${path}`;
+    }
+</script>
 {{- end }}
 {{- define "content" }}
-<form action="http://{{ .Common.Domain }}/{{ .Common.Prefix }}/login" method="post">
+    <form action="http://{{ .Common.Domain }}/{{ .Common.Prefix }}/admin/invite" method="post">
         <h1>{{ .Common.Title }}</h1>
         <input type="text" name="sut" id="sut" value="{{ .Context.SUT }}" hidden>
         <label for="username">Username</label>
         <input type="text" name="username" id="username" required>
-        <label for="password">Password</label>
-        <input type="password" name="password" id="password" required>
-        <input type="submit" value="Login">
+        <input type="reset" value="Back" onclick="navigate('admin')">
+        <input type="submit" value="Invite">
     </form>
     {{- if .Context.Error }}
     <p class="error">{{ .Context.Error }}</p>

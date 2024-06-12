@@ -76,7 +76,14 @@ int-test:
 build PATH_TO_CODE IMAGE_TAG:
     mkdir -p "{{PATH_TO_CODE}}/dist";
     CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o "{{PATH_TO_CODE}}/dist/app" "{{PATH_TO_CODE}}/main.go";
-    docker build -t "{{IMAGE_TAG}}" -f deploy/golang.Dockerfile "{{PATH_TO_CODE}}/dist"
+    if [ -d "{{PATH_TO_CODE}}/static" ]; then \
+        rm -rf "{{PATH_TO_CODE}}/dist/www/static"; \
+        mkdir -p "{{PATH_TO_CODE}}/dist/www/static"; \
+        cp -r {{PATH_TO_CODE}}/static/ {{PATH_TO_CODE}}/dist/www/static/; \
+        docker build -t "{{IMAGE_TAG}}" -f deploy/golang-web.Dockerfile "{{PATH_TO_CODE}}/dist"; \
+    else \
+        docker build -t "{{IMAGE_TAG}}" -f deploy/golang.Dockerfile "{{PATH_TO_CODE}}/dist"; \
+    fi
 
 build-mig PATH_TO_CODE IMAGE_TAG:
     docker build -t "{{IMAGE_TAG}}" -f deploy/migrations.Dockerfile "{{PATH_TO_CODE}}"

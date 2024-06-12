@@ -1,4 +1,4 @@
-package login
+package invite
 
 import (
 	_ "embed"
@@ -11,26 +11,26 @@ import (
 )
 
 //go:embed get.html
-var loginContent string
+var inviteContent string
 
-type GetLoginData struct {
+type GetInviteData struct {
 	SUT   string
 	Error string
 }
 
 func Get(prefix string, domain string, suts *sut.Client) api.Handler {
-	t, err := common.New(loginContent)
+	t, err := common.New(inviteContent)
 	if err != nil {
-		panic(fmt.Errorf("failed to create login template: %+v", err))
+		panic(fmt.Errorf("failed to create register template: %+v", err))
 	}
 
 	return api.Handler{
 		Method: "GET",
-		Path:   fmt.Sprintf("%s/login", prefix),
+		Path:   fmt.Sprintf("%s/admin/invite", prefix),
 		Handler: func(c *gin.Context) {
 			uuid, err := suts.Get()
 			if err != nil {
-				c.AbortWithError(500, fmt.Errorf("failed to generate SUT: %+v", err))
+				c.AbortWithError(500, fmt.Errorf("failed to get sut: %+v", err))
 				return
 			}
 
@@ -38,15 +38,16 @@ func Get(prefix string, domain string, suts *sut.Client) api.Handler {
 				Common: common.CommonData{
 					Prefix: prefix,
 					Domain: domain,
-					Title:  "Login",
+					Title:  "Invite User",
+					Logout: true,
 				},
-				Context: GetLoginData{
+				Context: GetInviteData{
 					SUT:   uuid,
 					Error: "",
 				},
 			})
 			if err != nil {
-				c.AbortWithError(500, fmt.Errorf("failed to render login page: %+v", err))
+				c.AbortWithError(500, fmt.Errorf("failed to render register page: %+v", err))
 			}
 		},
 	}

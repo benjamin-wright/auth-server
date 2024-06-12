@@ -18,13 +18,15 @@
                 alert(error);
             })
         }
+
+        function navigate(path) {
+            window.location.href = `${url}/${path}`;
+        }
     </script>
 {{- end }}
 {{- define "content" }}
-    <h1>{{ .Common.Title }}</h1>
-
     <section>
-        <h2>Users</h2>
+        <h1>Users</h1>
         <table>
             <tr>
                 <th>Username</th>
@@ -44,6 +46,13 @@
                 </td>
             </tr>
             {{- end }}
+            <tr>
+                <td></td>
+                <td></td>
+                <td>
+                    <button type="submit" onclick="navigate('admin/invite')">Invite</button>
+                </td>
+            </tr>
         </table>
     </section>
     

@@ -5,7 +5,8 @@ metadata:
 spec:
   template:
     metadata:
-      name: {{ template "ph.init.full_name" . }}
+      labels:
+        app: {{ template "ph.init.full_name" . }}
     spec:
       containers:
       - name: init
