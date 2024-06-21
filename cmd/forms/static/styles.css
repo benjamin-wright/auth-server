@@ -1,6 +1,6 @@
 :root {
-    --light-gray: rgb(224, 224, 224);
-    --blue-gray: rgb(192, 217, 223);
+    --light-gray: rgb(211, 222, 223);
+    --blue-gray: rgb(198, 220, 226);
     --dark-gray: rgb(63, 63, 63);
     --white: rgb(255, 255, 255);
     --blue: rgb(108, 198, 244);
@@ -99,7 +99,7 @@ form label {
     padding-right: 1em;
 }
 
-form input {
+form input, form p {
     grid-column: 2;
     margin: 0.5em;
 }

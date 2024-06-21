@@ -12,6 +12,7 @@ func Router(cli *users.Client) *gin.Engine {
 			postUser(cli),
 			getUsers(cli),
 			getUser(cli),
+			putUser(cli),
 			putPassword(cli),
 			deleteUser(cli),
 		},

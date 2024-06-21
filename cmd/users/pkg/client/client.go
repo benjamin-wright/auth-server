@@ -144,3 +144,20 @@ func (c *Client) DeleteUser(ctx context.Context, id string) error {
 
 	return nil
 }
+
+type UpdateUserRequest struct {
+	Admin bool `json:"admin"`
+}
+
+func (c *Client) UpdateUser(ctx context.Context, id string, admin bool) error {
+	status, err := request.Put(ctx, fmt.Sprintf("%s/id/%s", c.url, id), UpdateUserRequest{Admin: admin}, nil)
+	if err != nil {
+		return err
+	}
+
+	if status != http.StatusNoContent {
+		return fmt.Errorf("failed with status code %d", status)
+	}
+
+	return nil
+}

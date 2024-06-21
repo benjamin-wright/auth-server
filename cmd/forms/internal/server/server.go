@@ -20,6 +20,7 @@ func Router(prefix string, domain string, tokens *tokenClient.Client, users *use
 		Handlers: []api.Handler{
 			admin.Get(prefix, domain, suts, users),
 			user.Delete(prefix, domain, suts, users),
+			user.Put(prefix, domain, suts, users),
 			invite.Get(prefix, domain, suts),
 			invite.Post(prefix, domain, suts, users),
 			login.Get(prefix, domain, suts),

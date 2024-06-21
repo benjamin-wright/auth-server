@@ -19,6 +19,28 @@
             })
         }
 
+        function updateUser(id, value) {
+            fetch(`${url}/admin/user/${id}?sut=${encodeURIComponent(SUT)}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    admin: value
+                })
+            }).then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    response.text().then(text => {
+                        alert(text);
+                    });
+                }
+            }).catch(error => {
+                alert(error);
+            })
+        }
+
         function navigate(path) {
             window.location.href = `${url}/${path}`;
         }
@@ -39,10 +61,23 @@
                     <p>{{ $user.Username }}</p>
                 </td>
                 <td>
-                    <input type="checkbox" name="admin" {{ if $user.Admin }}checked{{ end }} {{ if eq $.Context.Caller $user.ID }}disabled{{ end }} />
+                    <input
+                        type="checkbox"
+                        name="admin"
+                        {{ if $user.Admin }}checked{{ end }}
+                        {{ if eq $.Context.Caller $user.ID }}disabled{{ end }}
+                        onclick="updateUser('{{ $user.ID }}', this.checked)"
+                    />
                 </td>
                 <td>
-                    <button type="submit" name="delete" onclick="deleteUser('{{ $user.ID }}')" {{ if eq $.Context.Caller $user.ID }}disabled{{ end }}>Delete</button>
+                    <button
+                        type="submit"
+                        name="delete"
+                        {{ if eq $.Context.Caller $user.ID }}disabled{{ end }}
+                        onclick="deleteUser('{{ $user.ID }}')"
+                    >
+                        Delete
+                    </button>
                 </td>
             </tr>
             {{- end }}

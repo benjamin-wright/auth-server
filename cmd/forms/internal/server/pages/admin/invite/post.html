@@ -1,19 +1,24 @@
 {{- define "header" }}
+<script>
+    function navigate(path) {
+        window.location.href = `http://{{ .Common.Domain }}/{{ .Common.Prefix }}/${path}`;
+    }
+</script>
 {{- end }}
 {{- define "content" }}
-    <h1>{{ .Common.Title }}</h1>
+    <form>
+        <h1>{{ .Common.Title }}</h1>
+
+        <label for="username">Username:</label>
+        <p id="username">{{ .Context.Username }}</p>
+        
+        <label for="id">ID:</label>
+        <p id="id">{{ .Context.ID }}</p>
     
-    <p>Added user:</p>
+        <label for="password">Password:</label>
+        <p id="password" data-testid="password">{{ .Context.Password }}</p>
 
-    <label for="username">Username:</label>
-    <p id="username">{{ .Context.Username }}</p>
-    
-    <label for="id">ID:</label>
-    <p id="id">{{ .Context.ID }}</p>
-
-    <label for="password">Password:</label>
-    <p id="password" data-testid="password">{{ .Context.Password }}</p>
-
-    <a href="http://{{ .Common.Domain }}/{{ .Common.Prefix }}/admin/invite">Invite another user</a>
-    <a href="http://{{ .Common.Domain }}/{{ .Common.Prefix }}/admin">Back to admin</a>
+        <input type="reset" value="Back" onclick="navigate('admin')">
+        <input type="submit" value="Another" onclick="navigate('admin/invite')">
+    </form>
 {{- end }}

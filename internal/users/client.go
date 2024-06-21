@@ -183,3 +183,13 @@ func (c *Client) DeleteUser(id string) error {
 
 	return nil
 }
+
+func (c *Client) UpdateUser(id string, admin bool) error {
+	log.Info().Str("id", id).Bool("admin", admin).Msg("updating user")
+	_, err := c.conn.Exec(context.Background(), `UPDATE users SET "admin" = $1 WHERE "id" = $2`, admin, id)
+	if err != nil {
+		return fmt.Errorf("failed to update user in database: %+v", err)
+	}
+
+	return nil
+}
