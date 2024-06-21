@@ -78,7 +78,7 @@ test('promote to admin flow', async ({ page }) => {
   await expect(page).toHaveTitle('Invited User');
   const password = await page.getByTestId('password').innerText();
 
-  await page.getByRole('button', { name: 'Back' }).click();
+  await page.getByRole('button', { name: 'Done' }).click();
   await expect(page).toHaveTitle('Admin');
 
   // Click the admin checkbox for the test user.
