@@ -1,4 +1,4 @@
-package server
+package user
 
 import (
 	"net/http"
@@ -9,32 +9,32 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func putPassword(c *users.Client) api.Handler {
+func Post(c *users.Client) api.Handler {
 	return api.Handler{
-		Method: "PUT",
-		Path:   "/:name/password",
+		Method: "POST",
+		Path:   "/user",
 		Handler: func(ctx *gin.Context) {
-			name := ctx.Param("name")
-			var body client.CheckPasswordRequest
+			var body client.AddUserRequest
 			err := ctx.BindJSON(&body)
 			if err != nil {
 				ctx.AbortWithError(http.StatusBadRequest, err)
 				return
 			}
 
-			user, err := c.CheckPassword(users.User{Name: name, Password: body.Password})
-			if err == users.ErrPasswordMismatch || err == users.ErrNoUser {
-				ctx.JSON(http.StatusUnauthorized, err)
+			id, err := c.AddUser(users.User{Name: body.Username, Password: body.Password, Admin: body.Admin})
+			if err == users.ErrUserExists {
+				ctx.AbortWithError(http.StatusConflict, err)
+				return
+			} else if err == users.ErrComplexity {
+				ctx.AbortWithError(http.StatusBadRequest, err)
 				return
 			} else if err != nil {
 				ctx.AbortWithError(http.StatusInternalServerError, err)
 				return
 			}
 
-			ctx.JSON(http.StatusOK, client.CheckPasswordResponse{
-				Username: user.Name,
-				ID:       user.ID,
-				Admin:    user.Admin,
+			ctx.JSON(http.StatusCreated, client.AddUserResponse{
+				ID: id,
 			})
 		},
 	}

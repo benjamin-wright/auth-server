@@ -1,4 +1,4 @@
-package server
+package user
 
 import (
 	"net/http"
@@ -8,10 +8,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func deleteUser(c *users.Client) api.Handler {
+func Delete(c *users.Client) api.Handler {
 	return api.Handler{
 		Method: "DELETE",
-		Path:   "/id/:id",
+		Path:   "/user/:id",
 		Handler: func(ctx *gin.Context) {
 			id := ctx.Param("id")
 			err := c.DeleteUser(id)

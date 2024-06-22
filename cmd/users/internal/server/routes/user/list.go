@@ -1,4 +1,4 @@
-package server
+package user
 
 import (
 	"net/http"
@@ -9,10 +9,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func getUsers(c *users.Client) api.Handler {
+func List(c *users.Client) api.Handler {
 	return api.Handler{
 		Method: "GET",
-		Path:   "/",
+		Path:   "/user",
 		Handler: func(ctx *gin.Context) {
 			users, err := c.ListUsers()
 			if err != nil {

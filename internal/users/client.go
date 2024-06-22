@@ -123,8 +123,8 @@ func (c *Client) CheckPassword(user User) (*User, error) {
 	return &user, nil
 }
 
-func (c *Client) GetUser(name string) (*User, error) {
-	rows, err := c.conn.Query(context.Background(), `SELECT "id", "admin" FROM users WHERE "name" = $1`, name)
+func (c *Client) GetUser(id string) (*User, error) {
+	rows, err := c.conn.Query(context.Background(), `SELECT "name", "admin" FROM users WHERE "id" = $1`, id)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user from database: %+v", err)
 	}
@@ -132,12 +132,12 @@ func (c *Client) GetUser(name string) (*User, error) {
 
 	numUsers := 0
 	user := User{
-		Name: name,
+		ID: id,
 	}
 
 	for rows.Next() {
 		numUsers += 1
-		if err = rows.Scan(&user.ID, &user.Admin); err != nil {
+		if err = rows.Scan(&user.Name, &user.Admin); err != nil {
 			return nil, fmt.Errorf("failed to parse new user ID: %+v", err)
 		}
 	}
@@ -184,11 +184,31 @@ func (c *Client) DeleteUser(id string) error {
 	return nil
 }
 
-func (c *Client) UpdateUser(id string, admin bool) error {
+func (c *Client) SetAdmin(id string, admin bool) error {
 	log.Info().Str("id", id).Bool("admin", admin).Msg("updating user")
 	_, err := c.conn.Exec(context.Background(), `UPDATE users SET "admin" = $1 WHERE "id" = $2`, admin, id)
 	if err != nil {
 		return fmt.Errorf("failed to update user in database: %+v", err)
+	}
+
+	return nil
+}
+
+func (c *Client) SetPassword(id string, newPassword string) error {
+	log.Info().Str("id", id).Msg("updating user password")
+	if !password.IsComplex(newPassword) {
+		return ErrComplexity
+	}
+
+	bytes, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return fmt.Errorf("failed to generate password hash: %+v", err)
+	}
+	hash := string(bytes)
+
+	_, err = c.conn.Exec(context.Background(), `UPDATE users SET "password" = $1 WHERE "id" = $2`, hash, id)
+	if err != nil {
+		return fmt.Errorf("failed to update password: %+v", err)
 	}
 
 	return nil

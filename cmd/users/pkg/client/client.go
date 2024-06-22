@@ -34,7 +34,7 @@ type AddUserResponse struct {
 
 func (c *Client) AddUser(ctx context.Context, username string, password string, admin bool) (*AddUserResponse, error) {
 	var response AddUserResponse
-	status, err := request.Post(ctx, c.url, AddUserRequest{
+	status, err := request.Post(ctx, c.url+"/user", AddUserRequest{
 		Username: username,
 		Password: password,
 		Admin:    admin,
@@ -60,9 +60,9 @@ type GetUserResponse struct {
 	Admin    bool   `json:"admin"`
 }
 
-func (c *Client) GetUser(ctx context.Context, username string) (*GetUserResponse, error) {
+func (c *Client) GetUser(ctx context.Context, id string) (*GetUserResponse, error) {
 	var response GetUserResponse
-	status, err := request.Get(ctx, c.url+"/"+url.PathEscape(username), &response)
+	status, err := request.Get(ctx, c.url+"/user/"+url.PathEscape(id), &response)
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +84,7 @@ type ListUsersResponse struct {
 
 func (c *Client) ListUsers(ctx context.Context) (*ListUsersResponse, error) {
 	var response ListUsersResponse
-	status, err := request.Get(ctx, c.url+"/", &response)
+	status, err := request.Get(ctx, c.url+"/user", &response)
 	if err != nil {
 		return nil, err
 	}
@@ -96,7 +96,39 @@ func (c *Client) ListUsers(ctx context.Context) (*ListUsersResponse, error) {
 	return &response, nil
 }
 
+func (c *Client) DeleteUser(ctx context.Context, id string) error {
+	status, err := request.Delete(ctx, fmt.Sprintf("%s/user/%s", c.url, id))
+	if err != nil {
+		return err
+	}
+
+	if status != http.StatusNoContent {
+		return fmt.Errorf("failed with status code %d", status)
+	}
+
+	return nil
+}
+
+type UpdateUserRequest struct {
+	Admin    bool   `json:"admin"`
+	Password string `json:"password"`
+}
+
+func (c *Client) UpdateUser(ctx context.Context, id string, admin bool, password string) error {
+	status, err := request.Put(ctx, fmt.Sprintf("%s/user/%s", c.url, id), UpdateUserRequest{Admin: admin}, nil)
+	if err != nil {
+		return err
+	}
+
+	if status != http.StatusNoContent {
+		return fmt.Errorf("failed with status code %d", status)
+	}
+
+	return nil
+}
+
 type CheckPasswordRequest struct {
+	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
@@ -110,8 +142,9 @@ func (c *Client) CheckPassword(ctx context.Context, username string, password st
 	var response CheckPasswordResponse
 	status, err := request.Put(
 		ctx,
-		fmt.Sprintf("%s/%s/password", c.url, url.PathEscape(username)),
+		fmt.Sprintf("%s/validate", c.url),
 		CheckPasswordRequest{
+			Username: username,
 			Password: password,
 		},
 		&response,
@@ -130,34 +163,4 @@ func (c *Client) CheckPassword(ctx context.Context, username string, password st
 	}
 
 	return &response, true, nil
-}
-
-func (c *Client) DeleteUser(ctx context.Context, id string) error {
-	status, err := request.Delete(ctx, fmt.Sprintf("%s/id/%s", c.url, id))
-	if err != nil {
-		return err
-	}
-
-	if status != http.StatusNoContent {
-		return fmt.Errorf("failed with status code %d", status)
-	}
-
-	return nil
-}
-
-type UpdateUserRequest struct {
-	Admin bool `json:"admin"`
-}
-
-func (c *Client) UpdateUser(ctx context.Context, id string, admin bool) error {
-	status, err := request.Put(ctx, fmt.Sprintf("%s/id/%s", c.url, id), UpdateUserRequest{Admin: admin}, nil)
-	if err != nil {
-		return err
-	}
-
-	if status != http.StatusNoContent {
-		return fmt.Errorf("failed with status code %d", status)
-	}
-
-	return nil
 }

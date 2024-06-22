@@ -1,4 +1,4 @@
-package server
+package user
 
 import (
 	"net/http"
@@ -9,10 +9,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func putUser(c *users.Client) api.Handler {
+func Put(c *users.Client) api.Handler {
 	return api.Handler{
 		Method: "PUT",
-		Path:   "/id/:id",
+		Path:   "/user/:id",
 		Handler: func(ctx *gin.Context) {
 			id := ctx.Param("id")
 			if id == "" {
@@ -26,7 +26,18 @@ func putUser(c *users.Client) api.Handler {
 				return
 			}
 
-			err := c.UpdateUser(id, user.Admin)
+			if user.Password != "" {
+				err := c.SetPassword(id, user.Password)
+				if err != nil {
+					ctx.AbortWithStatus(http.StatusInternalServerError)
+					return
+				}
+
+				ctx.Status(http.StatusNoContent)
+				return
+			}
+
+			err := c.SetAdmin(id, user.Admin)
 			if err != nil {
 				ctx.AbortWithStatus(http.StatusInternalServerError)
 				return

@@ -57,7 +57,7 @@ func Put(prefix string, domain string, suts *sut.Client, users *userClient.Clien
 				return
 			}
 
-			err = users.UpdateUser(context.Background(), userId, req.Admin)
+			err = users.UpdateUser(context.Background(), userId, req.Admin, "")
 			if err != nil {
 				log.Error().Err(err).Msg("failed to update user")
 				c.AbortWithStatus(http.StatusInternalServerError)

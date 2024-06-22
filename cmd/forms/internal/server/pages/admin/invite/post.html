@@ -1,6 +1,7 @@
 {{- define "header" }}
 <script>
-    function navigate(path) {
+    function navigate(event, path) {
+        event.preventDefault();
         window.location.href = `http://{{ .Common.Domain }}/{{ .Common.Prefix }}/${path}`;
     }
 </script>
@@ -8,17 +9,13 @@
 {{- define "content" }}
     <form>
         <h1>{{ .Common.Title }}</h1>
-
         <label for="username">Username:</label>
         <p id="username">{{ .Context.Username }}</p>
-        
         <label for="id">ID:</label>
         <p id="id">{{ .Context.ID }}</p>
-    
         <label for="password">Password:</label>
         <p id="password" data-testid="password">{{ .Context.Password }}</p>
-
-        <input type="reset" value="Back" onclick="navigate('admin/invite')">
-        <input type="submit" value="Done" onclick="navigate('admin')">
+        <input type="reset" value="Back" onclick="navigate(event, 'admin/invite')">
+        <input type="submit" value="Done" onclick="navigate(event, 'admin')">
     </form>
 {{- end }}

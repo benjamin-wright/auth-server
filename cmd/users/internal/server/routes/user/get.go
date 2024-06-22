@@ -1,4 +1,4 @@
-package server
+package user
 
 import (
 	"net/http"
@@ -9,13 +9,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func getUser(c *users.Client) api.Handler {
+func Get(c *users.Client) api.Handler {
 	return api.Handler{
 		Method: "GET",
-		Path:   "/:name",
+		Path:   "/user/:id",
 		Handler: func(ctx *gin.Context) {
-			name := ctx.Param("name")
-			user, err := c.GetUser(name)
+			id := ctx.Param("id")
+			user, err := c.GetUser(id)
 			if err == users.ErrNoUser {
 				ctx.AbortWithStatus(http.StatusNotFound)
 				return

@@ -8,12 +8,11 @@ import (
 )
 
 type CommonData struct {
-	Prefix       string
-	Domain       string
-	Title        string
-	LoginLink    bool
-	RegisterLink bool
-	Logout       bool
+	Prefix    string
+	Domain    string
+	Title     string
+	LoginLink bool
+	Logout    bool
 }
 
 type RenderData struct {
