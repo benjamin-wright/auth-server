@@ -115,7 +115,7 @@ type UpdateUserRequest struct {
 }
 
 func (c *Client) UpdateUser(ctx context.Context, id string, admin bool, password string) error {
-	status, err := request.Put(ctx, fmt.Sprintf("%s/user/%s", c.url, id), UpdateUserRequest{Admin: admin}, nil)
+	status, err := request.Put(ctx, fmt.Sprintf("%s/user/%s", c.url, id), UpdateUserRequest{Admin: admin, Password: password}, nil)
 	if err != nil {
 		return err
 	}

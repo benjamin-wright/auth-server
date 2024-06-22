@@ -1,8 +1,8 @@
 import { Page } from "playwright";
 import { expect } from "@playwright/test";
 
-export async function addTestUser(page: Page, username: string): Promise<string> {
-  await page.goto('http://ponglehub.localhost/auth/login');
+export async function asAdmin(page: Page, action: () => Promise<void>) {
+  await page.goto('http://ponglehub.com.localhost/auth/login');
 
   // Click the get started link.
   await page.getByLabel('Username').fill("admin");
@@ -11,8 +11,21 @@ export async function addTestUser(page: Page, username: string): Promise<string>
 
   await expect(page).toHaveTitle('Admin');
 
-  // Click the invite link.
-  await page.getByRole('link', { name: 'Invite' }).click();
+  await action();
+
+  await page.getByRole('link', { name: 'Logout' }).click();
+
+  await expect(page).toHaveTitle('Login');
+}
+
+export async function toggleAdmin(page: Page, username: string) {
+  await page.getByTestId("data-row").filter({ hasText: username }).locator('input[type="checkbox"]').check();
+  await page.waitForLoadState("networkidle");
+}
+
+export async function addTestUser(page: Page, username: string): Promise<string> {
+  // Click the invite button.
+  await page.getByRole('button', { name: 'Invite' }).click();
 
   await expect(page).toHaveTitle('Invite User');
 
@@ -21,19 +34,15 @@ export async function addTestUser(page: Page, username: string): Promise<string>
   await page.getByRole('button', { name: 'Invite' }).click();
 
   await expect(page).toHaveTitle('Invited User');
-  return await page.getByTestId('password').innerText();
+  const password = await page.getByTestId('password').innerText();
+
+  await page.getByRole('button', { name: 'Done' }).click();
+  await expect(page).toHaveTitle('Admin');
+
+  return password;
 }
 
-export async function dropTestUsers(page: Page) {
-  await page.goto("http://ponglehub.localhost/auth/login");
-
-  await expect(page).toHaveTitle("Login");
-  await page.getByLabel("Username").fill("admin");
-  await page.getByLabel("Password").fill("Password1!");
-  await page.getByRole("button").click();
-
-  await expect(page).toHaveTitle("Admin");
-
+export async function dropTestUsers(page: Page, spec: string) {
   let running = true;
   while (running) {
     running = false;
@@ -44,7 +53,7 @@ export async function dropTestUsers(page: Page) {
     let names = await Promise.all(rows);
 
     for (let name of names) {
-      if (name.startsWith("test-")) {
+      if (name.startsWith(`${spec}-`)) {
         await page
           .getByTestId("data-row")
           .filter({ hasText: name })

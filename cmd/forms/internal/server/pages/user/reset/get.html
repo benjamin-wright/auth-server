@@ -1,0 +1,16 @@
+{{- define "header" }}
+{{- end }}
+{{- define "content" }}
+    <form action="http://{{ .Common.Domain }}/{{ .Common.Prefix }}/user/reset" method="post">
+        <h1>{{ .Common.Title }}</h1>
+        <input type="text" name="sut" id="sut" value="{{ .Context.SUT }}" hidden>
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" required>
+        <label for="confirm">Confirm Password</label>
+        <input type="password" name="confirm" id="confirm" required>
+        <input type="submit" value="Update">
+    </form>
+    {{- if .Context.Error }}
+    <p class="error">{{ .Context.Error }}</p>
+    {{- end }}
+{{- end }}

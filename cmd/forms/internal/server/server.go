@@ -6,6 +6,7 @@ import (
 	"github.com/benjamin-wright/auth-server/cmd/forms/internal/server/pages/admin/user"
 	"github.com/benjamin-wright/auth-server/cmd/forms/internal/server/pages/login"
 	"github.com/benjamin-wright/auth-server/cmd/forms/internal/server/pages/logout"
+	"github.com/benjamin-wright/auth-server/cmd/forms/internal/server/pages/user/reset"
 	"github.com/benjamin-wright/auth-server/cmd/forms/internal/sut"
 	tokenClient "github.com/benjamin-wright/auth-server/cmd/tokens/pkg/client"
 	userClient "github.com/benjamin-wright/auth-server/cmd/users/pkg/client"
@@ -25,6 +26,8 @@ func Router(prefix string, domain string, tokens *tokenClient.Client, users *use
 			login.Get(prefix, domain, suts),
 			login.Post(prefix, domain, suts, tokens, users),
 			logout.Get(prefix, domain),
+			reset.Get(prefix, domain, suts),
+			reset.Post(prefix, domain, suts, users),
 		},
 	}
 

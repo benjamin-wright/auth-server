@@ -7,7 +7,6 @@ import (
 	"github.com/benjamin-wright/auth-server/cmd/forms/internal/server/common"
 	"github.com/benjamin-wright/auth-server/cmd/forms/internal/sut"
 	"github.com/benjamin-wright/auth-server/internal/api"
-	"github.com/benjamin-wright/auth-server/internal/users"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,16 +18,22 @@ type GetResetData struct {
 	Error string
 }
 
-func Get(prefix string, domain string, suts *sut.Client, users *users.Client) api.Handler {
+func Get(prefix string, domain string, suts *sut.Client) api.Handler {
 	t, err := common.New(resetContent)
 	if err != nil {
-		panic(fmt.Errorf("failed to create login template: %+v", err))
+		panic(fmt.Errorf("failed to create reset template: %+v", err))
 	}
 
 	return api.Handler{
 		Method: "GET",
-		Path:   fmt.Sprintf("%s/login", prefix),
+		Path:   fmt.Sprintf("%s/user/reset", prefix),
 		Handler: func(c *gin.Context) {
+			callingUser := c.Request.Header.Get("x-auth-user")
+			if callingUser == "" {
+				c.AbortWithStatus(401)
+				return
+			}
+
 			uuid, err := suts.Get()
 			if err != nil {
 				c.AbortWithError(500, fmt.Errorf("failed to generate SUT: %+v", err))
@@ -47,7 +52,7 @@ func Get(prefix string, domain string, suts *sut.Client, users *users.Client) ap
 				},
 			})
 			if err != nil {
-				c.AbortWithError(500, fmt.Errorf("failed to render login page: %+v", err))
+				c.AbortWithError(500, fmt.Errorf("failed to render password reset page: %+v", err))
 			}
 		},
 	}
