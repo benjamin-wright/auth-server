@@ -32,8 +32,5 @@ jobs:
         uses: extractions/setup-just@v2
       - name: Build
         run: just build cmd/${{ matrix.app }} benwright/auth-server/${{ matrix.app }}:${{ github.ref_name }}
-      - name: Image
-        uses: docker/build-push-action@v4
-        with:
-          push: true
-          tags: benwright/auth-server/${{ matrix.app }}:${{ github.ref_name }}
+      - name: Push
+        run: docker push benwright/auth-server/${{ matrix.app }}:${{ github.ref_name }}
