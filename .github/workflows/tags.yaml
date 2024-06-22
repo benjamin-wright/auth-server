@@ -31,6 +31,6 @@ jobs:
       - name: Install Just
         uses: extractions/setup-just@v2
       - name: Build
-        run: just build cmd/${{ matrix.app }} docker.io/benwright/auth-server/${{ matrix.app }}:${{ github.ref_name }}
+        run: just build cmd/${{ matrix.app }} docker.io/benwright/auth-server-${{ matrix.app }}:${{ github.ref_name }}
       - name: Push
-        run: docker push docker.io/benwright/auth-server/${{ matrix.app }}:${{ github.ref_name }}
+        run: docker push docker.io/benwright/auth-server-${{ matrix.app }}:${{ github.ref_name }}
