@@ -11,6 +11,7 @@ spec:
       containers:
       - name: init
         image: {{ .Values.users.init.image }}
+        image: {{ default (printf "benwright/auth-service/init:%s" .Chart.AppVersion) .Values.users.init.image }}
         env:
         - name: USERS_URL
           value: "http://{{ template "ph.users.full_name" . }}.{{ .Release.Namespace }}.svc.cluster.local"
