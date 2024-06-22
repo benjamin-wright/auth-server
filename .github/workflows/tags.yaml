@@ -26,11 +26,10 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: '1.22'
-      - name: Install Just
-        run: apt install -y just
       - name: Install dependencies
         run: go mod download
       - name: Build
+        uses: extractions/setup-just@v2
         run: just build cmd/${{ matrix.app }} benwright/auth-server/${{ matrix.app }}:${{ github.ref_name }}
       - name: Image
         uses: docker/build-push-action@v4
