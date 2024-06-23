@@ -2,12 +2,12 @@ prefix: auth
 domain: ponglehub.com.localhost
 
 postgres:
-  create: false
+  create: true
   deployment: "postgres"
   storage: "256Mi"
 
 redis:
-  create: false
+  create: true
   deployment: "redis"
   storage: "128Mi"
 

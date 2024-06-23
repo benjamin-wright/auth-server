@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: operator
-        image: {{ default (printf "benwright/auth-service/tokens:%s" .Chart.AppVersion) .Values.tokens.image }}
+        image: {{ default (printf "benwright/auth-service-tokens:%s" .Chart.AppVersion) .Values.tokens.image }}
         env:
         - name: NAMESPACE
           value: {{ .Release.Namespace }}

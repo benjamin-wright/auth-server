@@ -20,7 +20,7 @@ spec:
       {{- end }}
       containers:
       - name: operator
-        image: {{ default (printf "benwright/auth-service/forms:%s" .Chart.AppVersion) .Values.forms.image }}
+        image: {{ default (printf "benwright/auth-service-forms:%s" .Chart.AppVersion) .Values.forms.image }}
         envFrom:
         - secretRef:
             name: "{{ .Values.forms.redis.secret }}"

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: operator
-        image: {{ default (printf "benwright/auth-service/verify:%s" .Chart.AppVersion) .Values.verify.image }}
+        image: {{ default (printf "benwright/auth-service-verify:%s" .Chart.AppVersion) .Values.verify.image }}
         env:
         - name: LOGIN_URL
           value: {{ .Values.verify.loginUrl }}

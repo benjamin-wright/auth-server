@@ -9,7 +9,7 @@ spec:
     spec:
       containers:
       - name: migrations
-        image: {{ default (printf "benwright/auth-service/migrations:%s" .Chart.AppVersion) .Values.users.migrations.image }}
+        image: {{ default (printf "benwright/auth-service-migrations:%s" .Chart.AppVersion) .Values.users.migrations.image }}
         envFrom:
         - secretRef:
             name: "{{ .Values.users.migrations.secret }}"

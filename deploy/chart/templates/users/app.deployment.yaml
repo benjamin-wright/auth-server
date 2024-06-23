@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: operator
-        image: {{ default (printf "benwright/auth-service/users:%s" .Chart.AppVersion) .Values.users.image }}
+        image: {{ default (printf "benwright/auth-service-users:%s" .Chart.AppVersion) .Values.users.image }}
         envFrom:
         - secretRef:
             name: "{{ .Values.users.postgres.secret }}"
