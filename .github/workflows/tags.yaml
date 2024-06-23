@@ -69,6 +69,7 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
       - name: Install Helm
         uses: azure/setup-helm@v3
+      - uses: actions/checkout@v3
       - name: build
         run: helm package deploy/chart --version ${{ github.ref_name }} --app-version ${{ github.ref_name }}
       - name: push to dockerhub
