@@ -9,7 +9,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func Auth(keyfile tokens.Keyfile, loginURL string) api.Handler {
+func Auth(keyfile *tokens.TokenVerifier, loginURL string) api.Handler {
 	return api.Handler{
 		Method: "GET",
 		Path:   "/auth",

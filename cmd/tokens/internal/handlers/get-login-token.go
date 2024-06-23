@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GetLoginToken(t tokens.Keyfile) api.Handler {
+func GetLoginToken(t *tokens.TokenIssuer) api.Handler {
 	return api.Handler{
 		Method: "GET",
 		Path:   "/:subject/login",

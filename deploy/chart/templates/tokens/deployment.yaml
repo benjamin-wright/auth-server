@@ -18,9 +18,11 @@ spec:
         env:
         - name: NAMESPACE
           value: {{ .Release.Namespace }}
-        - name: TOKEN_KEYFILE
-          valueFrom:
-            secretKeyRef:
-              name: {{ include "ph.tokens.full_name" . }}-keyfile
-              key: keyfile
+        volumeMounts:
+        - name: signing-cert
+          mountPath: /etc/auth-server/certs
+      volumes:
+      - name: signing-cert
+        secret:
+          secretName: {{ include "ph.tokens.full_name" . }}-signing-cert
           

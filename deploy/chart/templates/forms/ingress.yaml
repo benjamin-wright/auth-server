@@ -5,7 +5,7 @@ metadata:
 spec:
   routes:
   - kind: Rule
-    match: PathPrefix(`{{ .Values.forms.urlPrefix }}/admin`)
+    match: PathPrefix(`/{{ .Values.prefix }}/admin`)
     middlewares:
     - name: auth-admin
     services:
@@ -15,7 +15,7 @@ spec:
       port: 80
       scheme: http
   - kind: Rule
-    match: PathPrefix(`{{ .Values.forms.urlPrefix }}/user`)
+    match: PathPrefix(`/{{ .Values.prefix }}/user`)
     middlewares:
     - name: auth-login
     services:
@@ -25,7 +25,7 @@ spec:
       port: 80
       scheme: http
   - kind: Rule
-    match: PathPrefix(`{{ .Values.forms.urlPrefix }}`)
+    match: PathPrefix(`/{{ .Values.prefix }}`)
     services:
     - kind: Service
       name: {{ template "ph.forms.full_name" . }}

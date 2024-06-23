@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/benjamin-wright/auth-server/cmd/verify/internal/handlers"
@@ -10,11 +11,15 @@ import (
 
 func main() {
 	loginURL := os.Getenv("LOGIN_URL")
-	keyfile := tokens.Keyfile(os.Getenv("TOKEN_KEYFILE"))
+
+	verifier, err := tokens.NewVerifier("/etc/auth-server/certs/signing.crt")
+	if err != nil {
+		panic(fmt.Errorf("failed to create token issuer: %+v", err))
+	}
 
 	api.Run(api.Router(api.RunOptions{
 		Handlers: []api.Handler{
-			handlers.Auth(keyfile, loginURL),
+			handlers.Auth(verifier, loginURL),
 		},
 	}))
 }

@@ -5,6 +5,8 @@ load('ext://helm_resource', 'helm_resource')
 load('ext://namespace', 'namespace_yaml')
 
 namespace = "auth-server"
+tokenCert = str(local('cat .scratch/localhost.crt | base64')).rstrip('\n')
+tokenKey = str(local('cat .scratch/localhost.key | base64')).rstrip('\n')
 
 k8s_yaml(namespace_yaml(namespace))
 
@@ -42,7 +44,6 @@ k8s_yaml(helm(
     namespace=namespace,
     set=[
         # General setup
-        "tokenKeyfile=super-secret",
         "adminPassword=Password1!",
         # Image overrides
         "users.image=users",

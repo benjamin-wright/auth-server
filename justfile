@@ -21,11 +21,10 @@ cert:
         .scratch/localhost.crt
 
 remove-cert:
-    sudo security remove-trusted-cert \
-        -d .scratch/localhost.crt
+    sudo security delete-certificate -t -c localhost /Library/Keychains/System.keychain
 
-start: create-cluster setup-context wait-for-traefik install-operator
-stop: delete-cluster clear-context
+start: create-cluster setup-context wait-for-traefik install-operator cert
+stop: delete-cluster clear-context remove-cert
 
 create-cluster:
     #!/usr/bin/env bash

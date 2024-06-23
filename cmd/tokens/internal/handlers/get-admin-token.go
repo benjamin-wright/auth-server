@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GetAdminToken(t tokens.Keyfile) api.Handler {
+func GetAdminToken(t *tokens.TokenIssuer) api.Handler {
 	return api.Handler{
 		Method: "GET",
 		Path:   "/:subject/admin",

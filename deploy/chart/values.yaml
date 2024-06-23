@@ -1,6 +1,7 @@
 prefix: auth
 domain: ponglehub.com.localhost
-# tokenKeyfile:
+# tlsCert:
+# tlsKey:
 adminUsername: admin
 # adminPassword: 
 
