@@ -17,7 +17,7 @@ spec:
         image: {{ default (printf "benwright/auth-service-verify:%s" .Chart.AppVersion) .Values.verify.image }}
         env:
         - name: LOGIN_URL
-          value: {{ .Values.verify.loginUrl }}
+          value: "http://{{ .Values.domain }}/auth/login"
         - name: TOKEN_KEYFILE
           valueFrom:
             secretKeyRef:

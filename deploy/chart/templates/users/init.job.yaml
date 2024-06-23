@@ -16,7 +16,7 @@ spec:
         - name: USERS_URL
           value: "http://{{ template "ph.users.full_name" . }}.{{ .Release.Namespace }}.svc.cluster.local"
         - name: USERS_ADMIN_USERNAME
-          value: {{ .Values.users.init.admin.username }}
+          value: {{ .Values.adminUsername }}
         - name: USERS_ADMIN_PASSWORD
           valueFrom:
             secretKeyRef:

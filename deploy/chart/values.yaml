@@ -1,5 +1,8 @@
 prefix: auth
 domain: ponglehub.com.localhost
+# tokenKeyfile:
+adminUsername: admin
+# adminPassword: 
 
 postgres:
   create: true
@@ -21,9 +24,6 @@ users:
     name: "init"
     secret: "user-init"
     # image:
-    admin:
-      username: "admin"
-      # password: 
   # image:
   name: users
   replicas: 1
@@ -34,7 +34,6 @@ users:
 
 tokens:
   # image:
-  # keyfile:
   name: tokens
   replicas: 1
 
@@ -42,11 +41,9 @@ verify:
   # image:
   name: verify
   replicas: 1
-  loginUrl: "http://ponglehub.com.localhost/auth/login"
 
 forms:
   # image:
-  urlPrefix: /auth
   name: forms
   replicas: 1
   # staticConfigMap: ""

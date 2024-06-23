@@ -41,14 +41,14 @@ k8s_yaml(helm(
     'auth-server',
     namespace=namespace,
     set=[
-        "cockroach.create=true",
-        "redis.create=true",
+        # General setup
+        "tokenKeyfile=super-secret",
+        "adminPassword=Password1!",
+        # Image overrides
         "users.image=users",
         "users.migrations.image=migrations",
         "users.init.image=init",
-        "users.init.admin.password=Password1!",
         "tokens.image=tokens",
-        "tokens.keyfile=super-secret",
         "verify.image=verify",
         "forms.image=forms",
     ],
